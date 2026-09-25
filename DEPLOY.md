@@ -33,5 +33,16 @@ or `sudo systemctl reload caddy`). Caddy will fetch Let's Encrypt certificates a
 ```bash
 cd ~/aftrsolutions && git pull && docker compose up -d --build
 ```
-(CI/CD with GitHub Actions — secrets `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`, same as
-Thesis Craft Mentors — can run these same commands over SSH on every push to `main`.)
+## 5. CI/CD (automatic)
+`.github/workflows/deploy.yml` builds the site and, on every push to `main`, SSHes into
+the server and runs `git reset --hard origin/main && docker compose up -d --build`.
+
+Repo → Settings → Secrets and variables → Actions → add:
+
+| Secret | Value |
+|---|---|
+| `EC2_HOST` | EC2 public IP |
+| `EC2_USER` | `ubuntu` |
+| `EC2_SSH_KEY` | full contents of the `.pem` private key |
+
+Caddy config (step 3) is a one-time manual step; the workflow does not touch it.
