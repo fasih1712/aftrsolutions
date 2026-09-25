@@ -1,6 +1,9 @@
 # Runs on the same EC2 server as Thesis Craft Mentors.
-# That server's Caddy already owns ports 80/443, so this container is bound to
-# localhost only and Caddy reverse-proxies aftrsolutions.com -> 127.0.0.1:8081.
+# That server's Caddy (inside the `thesiscraftmentors` container, default bridge
+# network) owns ports 80/443. This container is not publicly exposed:
+#   - 127.0.0.1:8081  -> for curl checks on the host
+#   - 172.17.0.1:8081 -> docker0 bridge IP, so the Caddy container can reach it
+# Caddy reverse-proxies aftrsolutions.com -> 172.17.0.1:8081.
 services:
   aftr-web:
     build: .
@@ -9,3 +12,4 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8081:80"
+      - "172.17.0.1:8081:80"

@@ -12,22 +12,21 @@ curl -I http://127.0.0.1:8081      # should return 200
 ```
 
 ## 3. Add the site to Caddy (automatic HTTPS)
-Add this block to the existing Caddyfile used by the Thesis Craft Mentors setup:
+Caddy runs inside the `thesiscraftmentors` container (default `bridge` network),
+and its Caddyfile is baked into that image. So the block lives in the
+ThesisCraftMentor repo's `Caddyfile`:
 
 ```
 aftrsolutions.com, www.aftrsolutions.com {
-    reverse_proxy 127.0.0.1:8081
+    reverse_proxy 172.17.0.1:8081
     encode gzip
 }
 ```
 
-> If Caddy runs **inside a Docker container**, `127.0.0.1` points at the Caddy
-> container itself. In that case put both containers on a shared Docker network
-> and use `reverse_proxy aftr-web:80` instead (and the host port mapping becomes
-> optional).
-
-Reload Caddy (`docker exec <caddy-container> caddy reload --config /etc/caddy/Caddyfile`
-or `sudo systemctl reload caddy`). Caddy will fetch Let's Encrypt certificates automatically.
+`172.17.0.1` is the host's `docker0` bridge IP (check with `ip -4 addr show docker0`);
+`docker-compose.yml` publishes aftr-web on it so the Caddy container can reach it.
+Pushing the ThesisCraftMentor repo rebuilds and restarts Caddy, which then fetches
+Let's Encrypt certificates automatically (stored in the `caddy_data` volume).
 
 ## 4. Updates
 ```bash

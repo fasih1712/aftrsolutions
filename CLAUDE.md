@@ -20,6 +20,6 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 
 ## Deployment
 - AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.
-- Container: multi-stage Dockerfile (node build -> nginx). Bound to 127.0.0.1:8081.
-- The existing Caddy on that server terminates HTTPS and reverse-proxies `aftrsolutions.com` + `www` to 127.0.0.1:8081. See DEPLOY.md.
+- Container: multi-stage Dockerfile (node build -> nginx). Bound to 127.0.0.1:8081 and 172.17.0.1:8081 (docker0).
+- Caddy runs inside the `thesiscraftmentors` container (Caddyfile baked in the ThesisCraftMentor repo) and reverse-proxies `aftrsolutions.com` + `www` to 172.17.0.1:8081. See DEPLOY.md.
 - Contact email: info@aftrsolutions.com
