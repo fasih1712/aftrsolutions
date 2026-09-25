@@ -28,17 +28,17 @@ public/                 ← favicons (A mark)
 
 ## Before going live
 
-- Update `email`, `phone` and social links in `src/data/site.js`.
+- Update `phone` and social links in `src/data/site.js` (email is `info@aftrsolutions.com`).
 - The contact form currently opens the visitor's email app (no backend). To receive
   submissions directly, connect it to Formspree, EmailJS or your own API in
   `src/components/Contact.jsx`.
 
 ## Deployment
 
-A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys to
-**GitHub Pages** on every push to `main`.
+Dockerised (multi-stage Node build → nginx) and deployed to AWS EC2 behind Caddy.
 
-One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+```bash
+docker compose up -d --build    # serves on 127.0.0.1:8081
+```
 
-The build output (`dist/`) is fully static, so it can also be hosted on Vercel,
-Netlify, Cloudflare Pages, S3 + CloudFront, or Nginx.
+Full steps (DNS, Caddy reverse proxy, updates): see [DEPLOY.md](DEPLOY.md).

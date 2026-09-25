@@ -17,8 +17,8 @@ import {
 
 export const site = {
   name: 'AFTR Solutions',
-  // TODO: replace with the real company email / phone before going live
-  email: 'hello@aftrsolutions.com',
+  // TODO: replace phone and social links with real ones before going live
+  email: 'info@aftrsolutions.com',
   phone: '+92 300 0000000',
   location: 'Karachi, Pakistan',
   social: {

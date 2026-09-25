@@ -1,0 +1,25 @@
+# AFTR Solutions website
+
+Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner: Muhammad Fasihullah.
+
+## Stack
+- React 19 + Vite, plain CSS (no Tailwind), lucide-react icons.
+- Light + dark theme via `data-theme` on `<html>`; tokens in `src/index.css` (`:root` and `:root[data-theme='dark']`).
+- All site copy lives in `src/data/site.js` — edit content there, not in components.
+- Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS.
+- Favicons (A mark only) in `public/`.
+
+## Design rules
+- Minimal, elegant, monochrome (Apple / Systems Ltd / 10Pearls style). No bright accent colours.
+- Full "AFTR Solutions" logo in hero; horizontal lockup in navbar/footer; A mark only for favicon.
+- Everything must look right in both themes and at 390px mobile width.
+
+## Commands
+- `npm run dev` / `npm run build` / `npm run preview`
+- `docker compose up -d --build` — serves on 127.0.0.1:8081
+
+## Deployment
+- AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.
+- Container: multi-stage Dockerfile (node build -> nginx). Bound to 127.0.0.1:8081.
+- The existing Caddy on that server terminates HTTPS and reverse-proxies `aftrsolutions.com` + `www` to 127.0.0.1:8081. See DEPLOY.md.
+- Contact email: info@aftrsolutions.com

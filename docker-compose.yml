@@ -1,0 +1,11 @@
+# Runs on the same EC2 server as Thesis Craft Mentors.
+# That server's Caddy already owns ports 80/443, so this container is bound to
+# localhost only and Caddy reverse-proxies aftrsolutions.com -> 127.0.0.1:8081.
+services:
+  aftr-web:
+    build: .
+    image: aftr-web:latest
+    container_name: aftr-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"
