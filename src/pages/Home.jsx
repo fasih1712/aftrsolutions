@@ -8,7 +8,7 @@ import { products } from '../data/products'
 import { team } from '../data/about'
 import { posts } from '../data/blog'
 import PostCard from '../components/PostCard'
-import { initials } from '../utils'
+import { initials, slugify } from '../utils'
 import { steps, useCases } from '../data/site'
 import { getService } from '../data/services'
 import { usePageTitle } from '../hooks/usePageTitle'
@@ -95,11 +95,11 @@ export default function Home() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead split eyebrow="Products" title="Ready-to-deploy products." lead="Proven AI products we tailor to your business — running securely on your cloud or ours." />
+          <SectionHead split eyebrow="Products" title="Products we built." lead="Our own Phelix ERP, Scrap Management system and AI chatbots for WhatsApp and websites — ready to deploy and tailored to you." />
           <div className="products">
-            {products.map(({ icon: Icon, tag, title, text }, i) => (
-              <Link to="/products" className="product reveal" key={title} style={{ '--d': `${i * 90}ms` }}>
-                <div className="product__top"><span className="product__tag">{tag}</span><Icon size={26} strokeWidth={1.4} /></div>
+            {products.map(({ icon: Icon, tag, title, text, own }, i) => (
+              <Link to={`/products#${slugify(title)}`} className="product reveal" key={title} style={{ '--d': `${(i % 3) * 90}ms` }}>
+                <div className="product__top"><span className="product__tag">{own ? `Our product · ${tag}` : tag}</span><Icon size={26} strokeWidth={1.4} /></div>
                 <h3>{title}</h3>
                 <p>{text}</p>
                 <span className="product__link">Learn more <ArrowUpRight size={16} /></span>
@@ -133,7 +133,9 @@ export default function Home() {
           <div className="founders">
             {team.map((m, i) => (
               <div className="founder reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
-                <span className="avatar">{initials(m.name)}</span>
+                {m.photo
+                  ? <img className="avatar avatar--photo" src={m.photo} alt={m.name} loading="lazy" />
+                  : <span className="avatar">{initials(m.name)}</span>}
                 <h3>{m.name}</h3>
                 <p className="founder__role">{m.role.replace('Co-founder · ', '')}</p>
                 <div className="founder__links">

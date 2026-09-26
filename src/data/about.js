@@ -1,7 +1,14 @@
 import { Layers, ShieldCheck, Gauge, Handshake } from 'lucide-react'
 
-// The four co-founders. `photo` is optional — put images in src/assets/team/ and import them here.
-export const team = [
+// Founder photos: drop <slug>.jpg (or .png/.webp) into src/assets/team/ and it is picked up automatically.
+const photos = import.meta.glob('../assets/team/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
+const photoFor = (name) => {
+  const slug = name.toLowerCase().replace(/\s+/g, '-')
+  return Object.entries(photos).find(([path]) => path.split('/').pop().split('.')[0] === slug)?.[1]
+}
+
+// The four co-founders. Photos come from src/assets/team/ (see above); initials show until one is added.
+const founders = [
   {
     name: 'Muhammad Fasihullah',
     role: 'Co-founder · Cloud, DevOps & AI',
@@ -31,6 +38,8 @@ export const team = [
     linkedin: 'https://www.linkedin.com/in/sjtaha/',
   },
 ]
+
+export const team = founders.map((m) => ({ ...m, photo: photoFor(m.name) }))
 
 export const values = [
   { icon: Layers, title: 'End-to-end ownership', text: 'Infrastructure, software and AI under one roof — one team accountable from first commit to production.' },

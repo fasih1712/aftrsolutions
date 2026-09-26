@@ -49,7 +49,7 @@ export default function About() {
             {team.map((m, i) => (
               <article className="member reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
                 <div className="member__photo">
-                  {m.photo ? <img src={m.photo} alt={m.name} /> : <span>{initials(m.name)}</span>}
+                  {m.photo ? <img src={m.photo} alt={m.name} loading="lazy" /> : <span>{initials(m.name)}</span>}
                 </div>
                 <h3>{m.name}</h3>
                 <p className="member__role">{m.role}</p>
