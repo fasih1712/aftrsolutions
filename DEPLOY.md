@@ -45,3 +45,15 @@ Repo → Settings → Secrets and variables → Actions → add:
 | `EC2_SSH_KEY` | full contents of the `.pem` private key |
 
 Caddy config (step 3) is a one-time manual step; the workflow does not touch it.
+
+## AI chat assistant
+
+The site runs a second container, `aftr-chat`, for the website chatbot. It needs an Anthropic API key:
+
+1. Create a key at https://console.anthropic.com (Settings > API keys) and add billing credit.
+2. In GitHub: repo **Settings > Secrets and variables > Actions > New repository secret**, name `ANTHROPIC_API_KEY`.
+3. Re-run the **Deploy to AWS EC2** workflow (Actions tab > Run workflow), or push any commit.
+
+The deploy writes the key to `~/aftrsolutions/.env` on the server (mode 600, not in git). Check it with
+`curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true}` means the chat button is live.
+Without a key the site works normally and the chat button stays hidden.

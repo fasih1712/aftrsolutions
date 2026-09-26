@@ -6,6 +6,7 @@ import { SectionHead, CTA, TechMarquee, LinkedInIcon } from '../components/Commo
 import { services } from '../data/services'
 import { products } from '../data/products'
 import { team } from '../data/about'
+import { photoFor } from '../data/teamPhotos'
 import { initials, slugify } from '../utils'
 import { technologies } from '../data/site'
 import { usePageTitle } from '../hooks/usePageTitle'
@@ -146,8 +147,8 @@ export default function Home() {
           <div className="founders">
             {team.map((m, i) => (
               <div className="founder reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
-                {m.photo
-                  ? <img className="avatar avatar--photo" src={m.photo} alt={m.name} loading="lazy" />
+                {photoFor(m.name)
+                  ? <img className="avatar avatar--photo" src={photoFor(m.name)} alt={m.name} loading="lazy" />
                   : <span className="avatar">{initials(m.name)}</span>}
                 <h3>{m.name}</h3>
                 <p className="founder__role">{m.role.replace('Co-founder · ', '')}</p>

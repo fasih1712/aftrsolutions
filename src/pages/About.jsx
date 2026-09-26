@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { PageHeader, SectionHead, CTA, LinkedInIcon } from '../components/Common'
 import { team, values } from '../data/about'
+import { photoFor } from '../data/teamPhotos'
 import { services } from '../data/services'
 import { initials } from '../utils'
 import { usePageTitle } from '../hooks/usePageTitle'
@@ -50,7 +51,7 @@ export default function About() {
             {team.map((m, i) => (
               <article className="member reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
                 <div className="member__photo">
-                  {m.photo ? <img src={m.photo} alt={m.name} loading="lazy" /> : <span>{initials(m.name)}</span>}
+                  {photoFor(m.name) ? <img src={photoFor(m.name)} alt={m.name} loading="lazy" /> : <span>{initials(m.name)}</span>}
                 </div>
                 <h3>{m.name}</h3>
                 <p className="member__role">{m.role}</p>

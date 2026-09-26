@@ -28,9 +28,17 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).
 - Any card that lists services must have the hover treatment (lift, deep shadow, gradient border, cursor spotlight).
 
+## AI chat assistant
+- Widget: `src/components/ChatWidget.jsx` (bottom-right, mounted in the App layout). Hidden unless `GET /api/health` returns `{ ready: true }`.
+- Backend: `server/index.mjs` (Node + `@anthropic-ai/sdk`, model `claude-opus-5`, effort low, `fallbacks: "default"`), streams plain text from `POST /api/chat`. Rate limit 30 req / 10 min per IP.
+- Knowledge: `scripts/build-knowledge.mjs` turns `src/data/*` into `server/knowledge.md` (generated, gitignored), so the bot only knows what the site says. Founders = name + role only; no personal info, no prices. Data files must stay importable by plain Node (no `import.meta.glob` in `src/data/*` except `teamPhotos.js`).
+- Key: GitHub secret `ANTHROPIC_API_KEY` -> deploy writes `.env` on the server -> `aftr-chat` container. nginx proxies `/api/` to `aftr-chat:8787`.
+- Local: `cd server && npm i && ANTHROPIC_API_KEY=... npm start`, then `npm run dev` (Vite proxies `/api`).
+
 ## Commands
 - `npm run dev` / `npm run build` / `npm run preview`
-- `docker compose up -d --build` — serves on 127.0.0.1:8081
+- `npm run knowledge` — rebuild the chatbot knowledge file
+- `docker compose up -d --build` — serves on 127.0.0.1:8081 (aftr-web + aftr-chat)
 
 ## Deployment
 - AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.

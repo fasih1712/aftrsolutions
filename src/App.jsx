@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Intro from './components/Intro'
+import ChatWidget from './components/ChatWidget'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import ServiceDetail from './pages/ServiceDetail'
@@ -35,6 +36,7 @@ function Layout({ theme, toggle }) {
         <Outlet />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   )
 }

@@ -6,4 +6,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  // `npm run dev`: forward chat requests to the assistant (cd server && npm start)
+  server: { proxy: { '/api': 'http://localhost:8787' } },
 })
