@@ -24,7 +24,7 @@ export default function Services() {
       </section>
       <section className="section section--alt">
         <div className="container">
-          <SectionHead split eyebrow="What we can build for you" title="Real problems we solve." lead="A few examples of what businesses come to us for — each one delivered end-to-end by our team." />
+          <SectionHead split eyebrow="What we can build for you" title="Real problems we solve." lead="A few examples of what businesses come to us for, each one delivered end to end by our team." />
           <div className="usecases">
             {useCases.map((u, i) => {
               const svc = getService(u.service)

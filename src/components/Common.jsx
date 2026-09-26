@@ -38,7 +38,7 @@ export function SectionHead({ eyebrow, title, lead, split = false, center = fals
   )
 }
 
-export function CTA({ title = 'Let’s build what’s next.', text = 'Tell us about your project — we’ll reply within one business day with next steps.' }) {
+export function CTA({ title = 'Let’s build what’s next.', text = 'Tell us about your project and we’ll reply within one business day with clear next steps.' }) {
   return (
     <section className="cta">
       <div className="container">

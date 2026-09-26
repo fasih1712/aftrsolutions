@@ -13,7 +13,7 @@ export default function ContactForm({ defaultService = '' }) {
   // Swap this for Formspree / an API endpoint when ready.
   const submit = (e) => {
     e.preventDefault()
-    const subject = `Project enquiry — ${form.name}${form.company ? ` (${form.company})` : ''}`
+    const subject = `Project enquiry: ${form.name}${form.company ? ` (${form.company})` : ''}`
     const body = [
       `Name: ${form.name}`,
       `Email: ${form.email}`,

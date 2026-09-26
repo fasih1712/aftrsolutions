@@ -13,7 +13,7 @@ export default function About() {
       <PageHeader
         eyebrow="About AFTR"
         title="Four founders. Full stack. Real ownership."
-        lead="AFTR Solutions was founded by four engineers who build and run technology for growing businesses — from AI agents and data platforms to the cloud they run on."
+        lead="AFTR Solutions was founded by four engineers who build and run technology for growing businesses, from AI agents and data platforms to the cloud they run on."
       />
 
       <section className="section section--tight">
@@ -25,16 +25,17 @@ export default function About() {
           <div className="story__text reveal" style={{ '--d': '100ms' }}>
             <p>
               We started AFTR because businesses kept telling us the same thing: they had one agency for
-              their website, another for the cloud, a freelancer for automation — and nobody who owned the
+              their website, another for the cloud, a freelancer for automation, and nobody who owned the
               whole picture. When something broke, everyone pointed somewhere else.
             </p>
             <p>
               So the four of us founded a company that covers the full stack. Between us we bring hands-on
-              experience in cloud and DevOps (with Alibaba Cloud certifications), data engineering, ERP
-              systems, AI and automation, web and app development, and enterprise IT infrastructure.
+              experience in cloud and DevOps on AWS, Azure and Alibaba Cloud, Kubernetes, Python, data
+              engineering and Power BI, LLMs and AI automation, ERP consulting, web and app development,
+              and enterprise IT infrastructure.
             </p>
             <p>
-              We are deliberately small. You work directly with the engineers building your system — no
+              We are deliberately small. You work directly with the engineers building your system, with no
               layers of account managers, no hand-offs to strangers. We stay involved after launch, because
               we would rather build things that keep working than things that just ship.
             </p>
@@ -44,7 +45,7 @@ export default function About() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead eyebrow="Founders" title="The people behind AFTR." lead="All four of us are co-founders — and all four of us work on client projects." />
+          <SectionHead eyebrow="Founders" title="The people behind AFTR." lead="All four of us are co-founders, and all four of us work directly on client projects." />
           <div className="team">
             {team.map((m, i) => (
               <article className="member reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
@@ -66,7 +67,7 @@ export default function About() {
 
       <section className="section">
         <div className="container">
-          <SectionHead split eyebrow="What we do" title="Six services, one partner." lead="Every engagement draws on the whole team — so your AI, data, software and infrastructure are designed to work together." />
+          <SectionHead split eyebrow="What we do" title="Six services, one partner." lead="Every engagement draws on the whole team, so your AI, data, software and infrastructure are designed to work together." />
           <div className="svc-list">
             {services.map((s, i) => {
               const Icon = s.icon

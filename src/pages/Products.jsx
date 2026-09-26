@@ -12,15 +12,19 @@ export default function Products() {
       <PageHeader
         eyebrow="Products"
         title="Software we built, ready to work."
-        lead="From our own Phelix ERP to AI chatbots for WhatsApp and your website — ready-to-deploy products we tailor to your business."
+        lead="From our own Phelix ERP to AI chatbots for WhatsApp and your website. Ready-to-deploy products that we tailor to your business."
       />
       <section className="section section--tight">
         <div className="container product-rows">
-          {products.map(({ icon: Icon, tag, title, text, features, own }, i) => (
+          {products.map(({ icon: Icon, tag, title, text, features, own, anim }, i) => (
             <article id={slugify(title)} className={`product-row reveal ${i % 2 ? 'product-row--flip' : ''}`} key={title}>
-              <div className="product-row__art" aria-hidden="true">
+              <div className={`product-row__art art art--${anim}`} aria-hidden="true">
                 <div className="product-row__glow" />
-                <Icon size={88} strokeWidth={1} />
+                <span className="art__ring art__ring--outer" />
+                <span className="art__ring art__ring--inner" />
+                <span className="art__orbit"><i /></span>
+                <span className="art__icon"><Icon size={88} strokeWidth={1} /></span>
+                {anim === 'chat' && <span className="art__typing"><i /><i /><i /></span>}
                 <span className="product__tag">{tag}</span>
               </div>
               <div className="product-row__body">
@@ -39,7 +43,7 @@ export default function Products() {
           ))}
         </div>
       </section>
-      <CTA title="Need something custom?" text="Every product can be tailored — or we can build a new one around your workflow." />
+      <CTA title="Need something custom?" text="Every product can be tailored, or we can build a new one around your workflow." />
     </>
   )
 }

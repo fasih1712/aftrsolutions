@@ -20,6 +20,8 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Minimal, elegant, monochrome (Apple / Systems Ltd / 10Pearls style). No bright accent colours.
 - Full logo (A mark + AFTR + SOLUTIONS) in hero and intro; horizontal lockup in navbar/footer; A mark only for favicon.
 - Everything must look right in both themes and at 390px mobile width.
+- Copy: no em dashes (—) anywhere; write plain, natural sentences so it never reads as AI-generated.
+- Motion: animated counters (`components/Counter.jsx`) on Home facts; product icons on /products animate per `anim` in `products.js`. Keep everything working under prefers-reduced-motion.
 
 - Services: AI Automation & Agents, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure, AI Solutions, Data Engineering.
 - Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).

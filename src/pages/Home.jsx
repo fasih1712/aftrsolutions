@@ -9,6 +9,9 @@ import { team } from '../data/about'
 import { initials, slugify } from '../utils'
 import { technologies } from '../data/site'
 import { usePageTitle } from '../hooks/usePageTitle'
+import Counter from '../components/Counter'
+
+const ownProducts = products.filter((p) => p.own)
 
 export default function Home() {
   usePageTitle()
@@ -25,7 +28,7 @@ export default function Home() {
           </h1>
           <p className="hero__lead reveal">
             AFTR Solutions is a technology company that designs, builds and runs the AI, cloud, data,
-            software and infrastructure modern businesses depend on — secure, scalable and made to last.
+            software and infrastructure modern businesses depend on. Secure, scalable and built to last.
           </p>
           <div className="hero__cta reveal">
             <Link to="/contact" className="btn btn--primary">Start a project <ArrowRight size={18} /></Link>
@@ -36,30 +39,43 @@ export default function Home() {
       </section>
 
       <section className="section" id="about">
-        <div className="container who">
-          <div className="who__text reveal">
-            <p className="eyebrow">Who we are</p>
-            <h2 className="section__title">Your technology partner, from idea to everyday operations.</h2>
-            <p>
-              AFTR Solutions is a Karachi-based technology company founded by four engineers. We help
-              businesses put the right technology in place — and keep it working. That means building
-              websites, apps and ERP systems, moving workloads to the cloud, organising data, automating
-              work with AI, and managing the IT infrastructure behind it all.
-            </p>
-            <p>
-              Instead of juggling separate agencies for the website, the servers and the automation, you
-              get one team that owns the whole picture — and stays with you after launch.
-            </p>
-            <div className="who__actions">
-              <Link to="/about" className="btn btn--primary">About the company <ArrowRight size={18} /></Link>
-              <Link to="/services" className="btn btn--ghost">Our services</Link>
+        <div className="container">
+          <div className="who">
+            <div className="who__head reveal">
+              <p className="eyebrow">Who we are</p>
+              <h2 className="section__title">Your technology partner, from the first idea to everyday operations.</h2>
+            </div>
+            <div className="who__text reveal" style={{ '--d': '100ms' }}>
+              <p>
+                AFTR Solutions is a technology company from Karachi, founded by four engineers. We help
+                businesses choose the right technology, build it properly and keep it running. Our work
+                covers websites, apps and ERP systems, cloud and DevOps, data engineering, AI automation
+                and the IT infrastructure that holds it all together.
+              </p>
+              <p>
+                You don’t need a separate agency for the website, another for the servers and a freelancer
+                for automation. You get one team that understands the whole picture, answers for all of it,
+                and stays with you after launch.
+              </p>
+              <div className="who__actions">
+                <Link to="/about" className="btn btn--primary">About the company <ArrowRight size={18} /></Link>
+                <Link to="/services" className="btn btn--ghost">Our services</Link>
+              </div>
             </div>
           </div>
-          <div className="facts reveal" style={{ '--d': '120ms' }}>
-            <div className="fact"><strong>{team.length}</strong><span>Co-founders, hands-on in every project</span></div>
-            <div className="fact"><strong>{services.length}</strong><span>Services under one roof</span></div>
-            <div className="fact"><strong>{products.filter((p) => p.own).length}</strong><span>In-house products, incl. Phelix ERP</span></div>
-            <div className="fact"><strong>{technologies.length}+</strong><span>Technologies and platforms we work with</span></div>
+          <div className="facts">
+            {[
+              { n: 50, suffix: '+', label: 'Projects delivered' },
+              { n: team.length, label: 'Co-founders, hands-on in every project' },
+              { n: services.length, label: 'Services under one roof' },
+              { n: ownProducts.length, label: 'In-house products, including Phelix ERP' },
+              { n: technologies.length, suffix: '+', label: 'Technologies and platforms' },
+            ].map((f, i) => (
+              <div className="fact reveal" key={f.label} style={{ '--d': `${i * 80}ms` }}>
+                <strong><Counter to={f.n} suffix={f.suffix} /></strong>
+                <span>{f.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -78,7 +94,7 @@ export default function Home() {
             {services.map((s, i) => <ServiceCard key={s.slug} service={s} index={i} />)}
           </div>
           <Link to="/contact" className="help-strip reveal">
-            <span><strong>Not sure what you need?</strong> Tell us the problem — we’ll recommend the right mix of services.</span>
+            <span><strong>Not sure what you need?</strong> Tell us the problem and we’ll recommend the right mix of services.</span>
             <span className="help-strip__cta">Talk to us <ArrowUpRight size={16} /></span>
           </Link>
         </div>
@@ -88,7 +104,7 @@ export default function Home() {
         <div className="container">
           <p className="statement__text reveal">
             One partner. <span>From the first line of code</span> to the servers it runs on{' '}
-            <span>— the data behind it, and the intelligence built into it.</span>
+            <span>the data behind it, and the intelligence built into it.</span>
           </p>
           <div className="statement__pillars">
             <div className="reveal"><strong>Infrastructure</strong><span>Cloud, on-prem and hybrid platforms that stay fast and secure.</span></div>
@@ -101,16 +117,19 @@ export default function Home() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead split eyebrow="Products" title="Products we built." lead="Our own Phelix ERP, Scrap Management system and AI chatbots for WhatsApp and websites — ready to deploy and tailored to you." />
-          <div className="products">
-            {products.map(({ icon: Icon, tag, title, text, own }, i) => (
-              <Link to={`/products#${slugify(title)}`} className="product reveal" key={title} style={{ '--d': `${(i % 3) * 90}ms` }}>
-                <div className="product__top"><span className="product__tag">{own ? `Our product · ${tag}` : tag}</span><Icon size={26} strokeWidth={1.4} /></div>
+          <SectionHead split eyebrow="Products" title="Products we built." lead="Our own Phelix ERP, Scrap Management system and AI chatbots for WhatsApp and websites. Ready to deploy and tailored to you." />
+          <div className="products products--four">
+            {ownProducts.map(({ icon: Icon, tag, title, text }, i) => (
+              <Link to={`/products#${slugify(title)}`} className="product reveal" key={title} style={{ '--d': `${i * 90}ms` }}>
+                <div className="product__top"><span className="product__tag">{tag}</span><Icon className="product__icon" size={28} strokeWidth={1.4} /></div>
                 <h3>{title}</h3>
                 <p>{text}</p>
                 <span className="product__link">Learn more <ArrowUpRight size={16} /></span>
               </Link>
             ))}
+          </div>
+          <div className="founders__more reveal">
+            <Link to="/products" className="btn btn--ghost">View all products <ArrowRight size={18} /></Link>
           </div>
         </div>
       </section>
@@ -120,8 +139,8 @@ export default function Home() {
           <SectionHead
             split
             eyebrow="Founders"
-            title="Built by four founders who do the work."
-            lead="Cloud, data, ERP and AI specialists who founded AFTR together — you work directly with us, not a layer of account managers."
+            title="Four founders who do the work themselves."
+            lead="Cloud, data, ERP and AI specialists who started AFTR together. You work directly with us, never through a chain of account managers."
           />
           <div className="founders">
             {team.map((m, i) => (
@@ -131,6 +150,8 @@ export default function Home() {
                   : <span className="avatar">{initials(m.name)}</span>}
                 <h3>{m.name}</h3>
                 <p className="founder__role">{m.role.replace('Co-founder · ', '')}</p>
+                <p className="founder__text">{m.short}</p>
+                <ul className="member__skills">{m.skills.slice(0, 4).map((k) => <li key={k}>{k}</li>)}</ul>
                 <div className="founder__links">
                   <a href={m.linkedin} target="_blank" rel="noreferrer" aria-label={`${m.name} on LinkedIn`}><LinkedInIcon /> LinkedIn</a>
                 </div>
