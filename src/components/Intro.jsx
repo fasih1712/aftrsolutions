@@ -11,7 +11,6 @@ const DURATION = 3000 // ms before the curtain lifts
 
 function shouldPlay() {
   try {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
     return sessionStorage.getItem(KEY) !== '1'
   } catch {
     return true

@@ -12,7 +12,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
   `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts).
 - Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
 - Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
-- Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`), skipped for reduced-motion users.
+- Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`).
 - Vite `base: '/'` is required for nested routes; nginx `try_files ... /index.html` handles SPA fallback.
 - Favicons (A mark only) in `public/`.
 
@@ -21,7 +21,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Full logo (A mark + AFTR + SOLUTIONS) in hero and intro; horizontal lockup in navbar/footer; A mark only for favicon.
 - Everything must look right in both themes and at 390px mobile width.
 - Copy: no em dashes (—) anywhere; write plain, natural sentences so it never reads as AI-generated.
-- Motion: animated counters (`components/Counter.jsx`) on Home facts; product icons on /products animate per `anim` in `products.js`. Keep everything working under prefers-reduced-motion.
+- Motion: animated counters (`components/Counter.jsx`) on Home facts; product icons on /products animate per `anim` in `products.js`. Animations stay ON under prefers-reduced-motion (Windows reports it whenever "Animation effects" is off, which hid all motion on the owner’s laptop); only smooth scroll and the hero glow drift are disabled there.
 
 - Services: AI Automation & Agents, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure, AI Solutions, Data Engineering.
 - Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).

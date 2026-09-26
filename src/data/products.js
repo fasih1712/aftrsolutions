@@ -1,7 +1,7 @@
 import { Boxes, Recycle, MessageCircle, BotMessageSquare, LineChart } from 'lucide-react'
 
 // `own: true` = products AFTR built in-house (shown first, badged "Our product").
-// `anim` picks the icon animation on the Products page: stack | spin | chat | pulse.
+// `anim` picks the icon animation on the Products page: stack | spin | chat | bot | chart.
 export const products = [
   {
     icon: Boxes,
@@ -34,7 +34,7 @@ export const products = [
     icon: BotMessageSquare,
     tag: 'Website',
     title: 'Website AI Chatbot',
-    anim: 'chat',
+    anim: 'bot',
     own: true,
     text: 'We integrate an AI chatbot into your existing website that answers visitor questions, recommends services and turns visitors into leads.',
     features: ['Works on any website', 'Trained on your content', 'Collects enquiries & bookings', 'Matches your brand'],
@@ -43,7 +43,7 @@ export const products = [
     icon: LineChart,
     tag: 'Insights',
     title: 'Analytics & Forecasting',
-    anim: 'pulse',
+    anim: 'chart',
     text: 'Dashboards and predictive models that turn operational data into clear, timely decisions.',
     features: ['Live KPI dashboards', 'Sales & demand forecasting', 'Anomaly alerts', 'Connects to your databases'],
   },

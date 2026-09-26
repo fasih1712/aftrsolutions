@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Moon, Sun, Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
 import { LockupLogo } from './Logo'
 import { nav } from '../data/site'
@@ -8,6 +8,14 @@ import { services } from '../data/services'
 export default function Navbar({ theme, onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  // Hover keeps the mega menu open, so after a click we hide it until the pointer leaves.
+  const [megaClosed, setMegaClosed] = useState(false)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    setMegaClosed(true)
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+  }, [pathname])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -30,7 +38,12 @@ export default function Navbar({ theme, onToggleTheme }) {
         <nav className="nav__links" aria-label="Primary">
           {nav.map((l) =>
             l.hasMenu ? (
-              <div className="nav__item nav__item--menu" key={l.to}>
+              <div
+                className={`nav__item nav__item--menu ${megaClosed ? 'nav__item--closed' : ''}`}
+                key={l.to}
+                onMouseEnter={() => setMegaClosed(false)}
+                onMouseLeave={() => setMegaClosed(false)}
+              >
                 <NavLink to={l.to} className="nav__link">
                   {l.label} <ChevronDown size={14} className="nav__chev" />
                 </NavLink>

@@ -262,6 +262,8 @@ button { font: inherit; color: inherit; }
   transition: opacity 0.25s var(--ease), transform 0.35s var(--ease), visibility 0.25s;
 }
 .nav__item--menu:hover .mega, .nav__item--menu:focus-within .mega { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.nav__item--menu.nav__item--closed .mega { opacity: 0; visibility: hidden; transform: translate(-50%, 8px); }
+.nav__item--menu.nav__item--closed .nav__chev { transform: none; }
 .mega__inner {
   width: 460px; padding: 10px; border-radius: 20px;
   background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-lift);
@@ -581,11 +583,61 @@ button { font: inherit; color: inherit; }
 .product-row.is-visible .art__icon svg *:nth-child(3) { animation-delay: 0.3s; }
 .product-row.is-visible .art__icon svg *:nth-child(n+4) { animation-delay: 0.45s; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
-.art--spin .art__icon svg { animation: spin 14s linear infinite; }
+.art__icon { z-index: 2; }
+
+/* Phelix ERP: the icon lifts while three blocks drop in and stack beside it */
 .art--stack .art__icon { animation: stack 4s var(--ease) infinite; }
-@keyframes stack { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-12px) scale(1.04); } 60% { transform: translateY(-12px) scale(1.04); } }
-.art--pulse .art__icon { animation: pulse 3s ease-in-out infinite; }
+@keyframes stack { 0%, 100% { transform: translateY(0) scale(1); } 40%, 60% { transform: translateY(-12px) scale(1.04); } }
+.art__cubes { position: absolute; left: calc(50% + 70px); top: calc(50% - 10px); width: 22px; height: 70px; z-index: 1; }
+.art__cubes i { position: absolute; left: 0; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--text); opacity: 0; animation: cubeDrop 4s var(--ease) infinite; }
+.art__cubes i:nth-child(1) { bottom: 0; }
+.art__cubes i:nth-child(2) { bottom: 24px; animation-delay: 0.35s; }
+.art__cubes i:nth-child(3) { bottom: 48px; animation-delay: 0.7s; }
+@keyframes cubeDrop { 0% { opacity: 0; transform: translateY(-40px); } 15%, 75% { opacity: 0.8; transform: none; } 90%, 100% { opacity: 0; transform: none; } }
+
+/* Scrap Management: recycle arrows turn one step at a time */
+.art--spin .art__icon svg { animation: recycle 4.5s var(--ease) infinite; }
+@keyframes recycle { 0%, 20% { transform: rotate(0); } 33%, 53% { transform: rotate(120deg); } 66%, 86% { transform: rotate(240deg); } 100% { transform: rotate(360deg); } }
+.art--spin .art__ring--outer { animation-duration: 12s; animation-direction: reverse; }
+
+/* AI WhatsApp Chatbot: message ping ripples plus typing dots */
+.art__ripple { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.art__ripple i { grid-area: 1 / 1; width: 110px; height: 110px; border-radius: 50%; border: 1.5px solid var(--text); opacity: 0; animation: ripple 3s ease-out infinite; }
+.art__ripple i:nth-child(2) { animation-delay: 1.5s; }
+@keyframes ripple { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(2.2); opacity: 0; } }
+
+/* Website AI Chatbot: a browser window with the bot inside, replies typing out */
+.art__window {
+  position: absolute; width: 210px; height: 150px; border-radius: 14px; z-index: 1;
+  border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--surface) 70%, transparent);
+  box-shadow: var(--shadow-lift); overflow: hidden;
+}
+.art__bar { display: flex; gap: 5px; padding: 9px 11px; border-bottom: 1px solid var(--border); }
+.art__bar i { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+.art__reply { position: absolute; right: 12px; bottom: 12px; display: grid; gap: 5px; justify-items: end; }
+.art__reply i { height: 6px; border-radius: 3px; background: var(--text); opacity: 0.55; transform-origin: right; animation: typeLine 3.6s var(--ease) infinite; }
+.art__reply i:nth-child(1) { width: 58px; }
+.art__reply i:nth-child(2) { width: 36px; animation-delay: 0.4s; }
+@keyframes typeLine { 0%, 10% { transform: scaleX(0); } 35%, 80% { transform: scaleX(1); } 95%, 100% { transform: scaleX(0); } }
+.art--bot .art__icon { animation: botSway 3.2s ease-in-out infinite; }
+.art--bot .art__icon svg { width: 64px; height: 64px; }
+@keyframes botSway { 0%, 100% { transform: translateY(4px) rotate(-6deg); } 50% { transform: translateY(-6px) rotate(6deg); } }
+
+/* Analytics & Forecasting: live bar chart behind the icon */
+.art__bars { position: absolute; bottom: calc(50% - 62px); display: flex; align-items: flex-end; gap: 10px; height: 124px; z-index: 1; opacity: 0.13; }
+.art__bars i { width: 16px; border-radius: 4px 4px 0 0; background: var(--text); animation: bar 2.8s ease-in-out infinite; }
+.art__bars i:nth-child(1) { height: 40%; }
+.art__bars i:nth-child(2) { height: 65%; animation-delay: 0.2s; }
+.art__bars i:nth-child(3) { height: 50%; animation-delay: 0.4s; }
+.art__bars i:nth-child(4) { height: 85%; animation-delay: 0.6s; }
+.art__bars i:nth-child(5) { height: 70%; animation-delay: 0.8s; }
+@keyframes bar { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.45); } }
+.art__bars i { transform-origin: bottom; }
+.art--chart .art__icon { animation: pulse 3s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+/* the chart line redraws itself every few seconds */
+.product-row.is-visible .art--chart .art__icon svg * { animation: redraw 4s var(--ease) infinite; }
+@keyframes redraw { 0% { stroke-dashoffset: 420; } 30%, 92% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 420; } }
 .art__typing {
   position: absolute; left: calc(50% + 34px); top: calc(50% - 78px);
   display: flex; gap: 5px; padding: 10px 13px; border-radius: 14px 14px 14px 4px;
@@ -952,12 +1004,12 @@ button { font: inherit; color: inherit; }
 .help-strip.reveal.is-visible:hover { transform: translateY(-3px); }
 .why__item.reveal.is-visible:hover { transform: translateX(6px); }
 
+/* Windows reports "reduce motion" whenever its Animation effects setting is off, which is
+   common on laptops. The site's motion is gentle, so it stays on; only smooth scrolling and
+   the drifting hero glow are turned off. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
-  .reveal { opacity: 1; transform: none; }
-  .art__icon svg * { stroke-dashoffset: 0; }
-  .art__typing { opacity: 1; }
+  .hero__glow { animation: none; }
 }
 
 /* ============ Responsive ============ */

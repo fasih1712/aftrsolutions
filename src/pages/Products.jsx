@@ -24,7 +24,10 @@ export default function Products() {
                 <span className="art__ring art__ring--inner" />
                 <span className="art__orbit"><i /></span>
                 <span className="art__icon"><Icon size={88} strokeWidth={1} /></span>
-                {anim === 'chat' && <span className="art__typing"><i /><i /><i /></span>}
+                {anim === 'stack' && <span className="art__cubes"><i /><i /><i /></span>}
+                {anim === 'chat' && <><span className="art__ripple"><i /><i /></span><span className="art__typing"><i /><i /><i /></span></>}
+                {anim === 'bot' && <span className="art__window"><span className="art__bar"><i /><i /><i /></span><span className="art__reply"><i /><i /></span></span>}
+                {anim === 'chart' && <span className="art__bars"><i /><i /><i /><i /><i /></span>}
                 <span className="product__tag">{tag}</span>
               </div>
               <div className="product-row__body">
