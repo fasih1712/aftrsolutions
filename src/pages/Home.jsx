@@ -24,11 +24,11 @@ export default function Home() {
           <div className="hero__logo reveal"><FullLogo /></div>
           <p className="eyebrow reveal">AI · Cloud · Data · Development · Infrastructure</p>
           <h1 className="hero__title reveal">
-            Technology, engineered<br className="br-desktop" /> for what comes next.
+            AI-powered technology,<br className="br-desktop" /> built for what comes next.
           </h1>
           <p className="hero__lead reveal">
-            AFTR Solutions is a technology company that designs, builds and runs the AI, cloud, data,
-            software and infrastructure modern businesses depend on. Secure, scalable and built to last.
+            AFTR Solutions is an AI-first technology company. We build AI chatbots, agents and data
+            solutions, and the cloud, software and infrastructure they run on. Secure, scalable and built to last.
           </p>
           <div className="hero__cta reveal">
             <Link to="/contact" className="btn btn--primary">Start a project <ArrowRight size={18} /></Link>
@@ -47,10 +47,11 @@ export default function Home() {
             </div>
             <div className="who__text reveal" style={{ '--d': '100ms' }}>
               <p>
-                AFTR Solutions is a technology company from Karachi, founded by four engineers. We help
-                businesses choose the right technology, build it properly and keep it running. Our work
-                covers websites, apps and ERP systems, cloud and DevOps, data engineering, AI automation
-                and the IT infrastructure that holds it all together.
+                AFTR Solutions is an AI-first technology company from Karachi, founded by four engineers.
+                We help businesses put AI to real use: chatbots that answer customers on WhatsApp and the web,
+                agents that take over repetitive work, and analytics that turn data into decisions. Around
+                that we build the websites, apps and ERP systems, cloud and DevOps, and IT infrastructure
+                that everything runs on.
               </p>
               <p>
                 You don’t need a separate agency for the website, another for the servers and a freelancer
@@ -87,8 +88,8 @@ export default function Home() {
           <SectionHead
             split
             eyebrow="Services we provide"
-            title="Six services. One accountable team."
-            lead="Engage us for a single project or as your long-term technology partner. Each service has its own page with full details."
+            title="AI first. Six services, one team."
+            lead="AI sits at the centre of what we do, backed by the data, cloud and software skills to make it work in the real world. Each service has its own page with full details."
           />
           <div className="scards">
             {services.map((s, i) => <ServiceCard key={s.slug} service={s} index={i} />)}
@@ -107,17 +108,17 @@ export default function Home() {
             <span>the data behind it, and the intelligence built into it.</span>
           </p>
           <div className="statement__pillars">
-            <div className="reveal"><strong>Infrastructure</strong><span>Cloud, on-prem and hybrid platforms that stay fast and secure.</span></div>
-            <div className="reveal" style={{ '--d': '100ms' }}><strong>Software</strong><span>Websites, apps and internal systems engineered for real users.</span></div>
-            <div className="reveal" style={{ '--d': '200ms' }}><strong>Data</strong><span>Pipelines, warehouses and dashboards that give you one source of truth.</span></div>
-            <div className="reveal" style={{ '--d': '300ms' }}><strong>Intelligence</strong><span>AI agents and solutions that automate work and surface what matters.</span></div>
+            <div className="reveal"><strong>Intelligence</strong><span>AI chatbots, agents and models that automate work and surface what matters.</span></div>
+            <div className="reveal" style={{ '--d': '100ms' }}><strong>Data</strong><span>Pipelines, analysis and dashboards that give you one source of truth.</span></div>
+            <div className="reveal" style={{ '--d': '200ms' }}><strong>Software</strong><span>Websites, apps and ERP systems engineered for real users.</span></div>
+            <div className="reveal" style={{ '--d': '300ms' }}><strong>Infrastructure</strong><span>Cloud, on-prem and hybrid platforms that stay fast and secure.</span></div>
           </div>
         </div>
       </section>
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead split eyebrow="Products" title="Products we built." lead="Our own Phelix ERP, Scrap Management system and AI chatbots for WhatsApp and websites. Ready to deploy and tailored to you." />
+          <SectionHead split eyebrow="Products" title="AI products and business software." lead="AI chatbots for WhatsApp and websites, plus our own Phelix ERP and Scrap Management system. Ready to deploy and tailored to you." />
           <div className="products products--four">
             {ownProducts.map(({ icon: Icon, tag, title, text }, i) => (
               <Link to={`/products#${slugify(title)}`} className="product reveal" key={title} style={{ '--d': `${i * 90}ms` }}>

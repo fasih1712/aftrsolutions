@@ -23,7 +23,8 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Copy: no em dashes (—) anywhere; write plain, natural sentences so it never reads as AI-generated.
 - Motion: animated counters (`components/Counter.jsx`) on Home facts; product icons on /products animate per `anim` in `products.js`. Animations stay ON under prefers-reduced-motion (Windows reports it whenever "Animation effects" is off, which hid all motion on the owner’s laptop); only smooth scroll and the hero glow drift are disabled there.
 
-- Services: AI Automation & Agents, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure, AI Solutions, Data Engineering.
+- Services (AI first, in this order): AI Automation & Agents, AI Solutions, Data Engineering & Analytics, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure. AI is the lead message across the site.
+- Products (AI first): AI WhatsApp Chatbot, Website AI Chatbot, AI Forecasting & Analytics, Phelix ERP (own), Scrap Management (own).
 - Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).
 - Any card that lists services must have the hover treatment (lift, deep shadow, gradient border, cursor spotlight).
 

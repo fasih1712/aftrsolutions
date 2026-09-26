@@ -11,8 +11,8 @@ export default function Products() {
     <>
       <PageHeader
         eyebrow="Products"
-        title="Software we built, ready to work."
-        lead="From our own Phelix ERP to AI chatbots for WhatsApp and your website. Ready-to-deploy products that we tailor to your business."
+        title="AI products, ready to work."
+        lead="AI chatbots for WhatsApp and your website, AI forecasting, and our own Phelix ERP and Scrap Management system. Ready-to-deploy products that we tailor to your business."
       />
       <section className="section section--tight">
         <div className="container product-rows">

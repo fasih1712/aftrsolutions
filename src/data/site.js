@@ -22,10 +22,10 @@ export const nav = [
 ]
 
 export const technologies = [
+  'LLMs', 'OpenAI', 'LangChain', 'n8n', 'Python', 'Power BI', 'Apache Airflow',
   'Kubernetes', 'Docker', 'AWS', 'Microsoft Azure', 'Alibaba Cloud', 'Google Cloud',
   'Terraform', 'GitHub Actions', 'VMware', 'Linux', 'Windows Server', 'Microsoft 365',
-  'React', 'React Native', 'Node.js', 'Python', 'PostgreSQL', 'LLMs', 'OpenAI', 'LangChain', 'n8n',
-  'Power BI', 'Apache Airflow', 'Prometheus', 'Grafana',
+  'React', 'React Native', 'Node.js', 'PostgreSQL', 'Prometheus', 'Grafana',
 ]
 
 export const steps = [

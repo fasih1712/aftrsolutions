@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { technologies } from '../data/site'
 
@@ -39,6 +39,8 @@ export function SectionHead({ eyebrow, title, lead, split = false, center = fals
 }
 
 export function CTA({ title = 'Let’s build what’s next.', text = 'Tell us about your project and we’ll reply within one business day with clear next steps.' }) {
+  // On the Services page a "View services" link would go nowhere, so offer Products there.
+  const onServices = useLocation().pathname === '/services'
   return (
     <section className="cta">
       <div className="container">
@@ -48,7 +50,9 @@ export function CTA({ title = 'Let’s build what’s next.', text = 'Tell us ab
           <p>{text}</p>
           <div className="cta__actions">
             <Link to="/contact" className="btn btn--invert">Start a project <ArrowRight size={18} /></Link>
-            <Link to="/services" className="btn btn--invert-ghost">View services</Link>
+            {onServices
+              ? <Link to="/products" className="btn btn--invert-ghost">View products</Link>
+              : <Link to="/services" className="btn btn--invert-ghost">View services</Link>}
           </div>
         </div>
       </div>
