@@ -15,7 +15,7 @@ export default function ServiceDetail() {
   if (!service) return <NotFound />
 
   const { icon: Icon, title, subtitle, tagline, intro, offerings, stack, outcomes, faqs } = service
-  const others = services.filter((s) => s.slug !== slug)
+  const others = services.filter((s) => s.slug !== slug).slice(0, 4)
 
   return (
     <>

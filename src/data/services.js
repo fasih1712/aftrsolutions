@@ -1,4 +1,4 @@
-import { Bot, Cloud, Code2, ServerCog, BrainCircuit } from 'lucide-react'
+import { Bot, Cloud, Code2, ServerCog, BrainCircuit, Database } from 'lucide-react'
 
 // Each service gets its own page at /services/:slug
 export const services = [
@@ -68,14 +68,14 @@ export const services = [
     short: 'Fast, beautiful websites and mobile apps engineered with modern stacks and built to scale.',
     tagline: 'Products people love to use.',
     intro:
-      'We design and develop websites, web applications and mobile apps that look sharp, load fast and are easy to maintain. From a company website to a full SaaS platform or a cross-platform app, we take it from idea to launch — and keep it running after.',
+      'We design and develop websites, web applications, mobile apps and business systems that look sharp, load fast and are easy to maintain. From a company website to a full SaaS platform, an ERP rollout or a cross-platform app, we take it from idea to launch — and keep it running after.',
     offerings: [
       { title: 'Business websites', text: 'Elegant, responsive, SEO-ready websites that represent your brand and convert visitors.' },
       { title: 'Web applications', text: 'Dashboards, portals, CRMs and SaaS platforms with clean architecture and secure APIs.' },
       { title: 'Mobile apps', text: 'Cross-platform iOS and Android apps with React Native — one codebase, native feel.' },
       { title: 'E-commerce', text: 'Online stores with payments, inventory and order management that scale with demand.' },
       { title: 'APIs & integrations', text: 'REST and GraphQL APIs, payment gateways and third-party integrations done properly.' },
-      { title: 'UI/UX design', text: 'Wireframes, prototypes and design systems focused on clarity and usability.' },
+      { title: 'ERP & business systems', text: 'ERP implementation and customisation that connects finance, inventory, sales and operations in one system.' },
     ],
     stack: ['React', 'Next.js', 'React Native', 'Node.js', 'Python', 'PostgreSQL', 'MongoDB', 'Tailwind', 'Figma'],
     outcomes: [
@@ -146,6 +146,36 @@ export const services = [
       { q: 'Is our data safe with AI?', a: 'Yes. We use enterprise APIs that do not train on your data, or host models privately in your cloud. Access is controlled and logged.' },
       { q: 'We are not sure where AI fits. Can you help?', a: 'That is exactly what our strategy workshop is for — we map your processes and highlight where AI will pay off first.' },
       { q: 'What is the difference between AI Solutions and AI Automation & Agents?', a: 'AI Solutions builds intelligence — search, insights, predictions. AI Automation & Agents puts that intelligence to work, taking actions across your tools.' },
+    ],
+  },
+  {
+    slug: 'data-engineering',
+    icon: Database,
+    title: 'Data Engineering',
+    subtitle: 'Pipelines & Analytics',
+    short: 'Reliable data pipelines, warehouses and dashboards that turn scattered business data into answers you can trust.',
+    tagline: 'Clean data. Clear decisions.',
+    intro:
+      'Most businesses have plenty of data — spread across apps, spreadsheets, ERPs and databases that never talk to each other. We design and build the pipelines that bring it together, clean it, and deliver it to warehouses, dashboards and AI models, with monitoring so the numbers stay right.',
+    offerings: [
+      { title: 'Data pipelines (ETL / ELT)', text: 'Automated, scheduled pipelines that pull data from your apps, APIs and databases and keep it in sync.' },
+      { title: 'Data warehouses & lakes', text: 'Modern warehouses on the cloud, modelled so reporting is fast and consistent across teams.' },
+      { title: 'Dashboards & reporting', text: 'Business dashboards and self-serve reporting built on a single source of truth.' },
+      { title: 'Data integration', text: 'Connect CRM, ERP, e-commerce and finance systems so data flows without manual exports.' },
+      { title: 'Data quality & governance', text: 'Validation, lineage and access controls so everyone trusts — and can safely use — the numbers.' },
+      { title: 'Data for AI', text: 'Prepared, well-structured datasets and feature pipelines that make AI projects actually work.' },
+    ],
+    stack: ['Python', 'SQL', 'Apache Airflow', 'Apache Spark', 'dbt', 'PostgreSQL', 'BigQuery', 'Snowflake', 'Power BI'],
+    outcomes: [
+      'One source of truth for the business',
+      'Reports that update themselves',
+      'No more manual spreadsheet exports',
+      'Data that is ready for AI',
+    ],
+    faqs: [
+      { q: 'Our data is spread across many tools. Where do we start?', a: 'We start with the questions you need answered, map where that data lives, and build the first pipeline and dashboard around it — then expand.' },
+      { q: 'Do we need a big data platform?', a: 'Usually not. Many businesses are well served by a managed cloud database and a few reliable pipelines. We size the platform to your data, not the other way round.' },
+      { q: 'Can you work with our ERP data?', a: 'Yes. We regularly integrate ERP, CRM and finance systems, and our team includes ERP specialists who know how that data is structured.' },
     ],
   },
 ]

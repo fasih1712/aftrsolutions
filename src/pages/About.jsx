@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
-import { PageHeader, SectionHead, CTA } from '../components/Common'
+import { PageHeader, SectionHead, CTA, LinkedInIcon } from '../components/Common'
 import { team, values } from '../data/about'
 import { services } from '../data/services'
 import { initials } from '../utils'
@@ -12,15 +12,15 @@ export default function About() {
     <>
       <PageHeader
         eyebrow="About AFTR"
-        title="Small team. Full stack. Real ownership."
-        lead="AFTR Solutions is a team of four engineers who build and run technology for growing businesses — from AI agents to the cloud they run on."
+        title="Four founders. Full stack. Real ownership."
+        lead="AFTR Solutions was founded by four engineers who build and run technology for growing businesses — from AI agents and data platforms to the cloud they run on."
       />
 
       <section className="section section--tight">
         <div className="container story">
           <div className="story__num reveal">
             <strong>4</strong>
-            <span>specialists, one team</span>
+            <span>co-founders, one team</span>
           </div>
           <div className="story__text reveal" style={{ '--d': '100ms' }}>
             <p>
@@ -29,10 +29,9 @@ export default function About() {
               whole picture. When something broke, everyone pointed somewhere else.
             </p>
             <p>
-              So we built a team that covers the full stack. Between the four of us we bring hands-on
-              production experience in Kubernetes and CI/CD, multi-cloud platforms (with AWS and Alibaba
-              Cloud certifications), AI and automation, web and app development, and enterprise IT
-              infrastructure.
+              So the four of us founded a company that covers the full stack. Between us we bring hands-on
+              experience in cloud and DevOps (with Alibaba Cloud certifications), data engineering, ERP
+              systems, AI and automation, web and app development, and enterprise IT infrastructure.
             </p>
             <p>
               We are deliberately small. You work directly with the engineers building your system — no
@@ -45,16 +44,20 @@ export default function About() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead eyebrow="Our team" title="The people behind AFTR." />
+          <SectionHead eyebrow="Founders" title="The people behind AFTR." lead="All four of us are co-founders — and all four of us work on client projects." />
           <div className="team">
             {team.map((m, i) => (
-              <article className="member reveal" key={i} style={{ '--d': `${i * 90}ms` }}>
+              <article className="member reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
                 <div className="member__photo">
                   {m.photo ? <img src={m.photo} alt={m.name} /> : <span>{initials(m.name)}</span>}
                 </div>
                 <h3>{m.name}</h3>
                 <p className="member__role">{m.role}</p>
                 <p className="member__bio">{m.bio}</p>
+                <ul className="member__skills">{m.skills.map((k) => <li key={k}>{k}</li>)}</ul>
+                <a className="member__link" href={m.linkedin} target="_blank" rel="noreferrer" aria-label={`${m.name} on LinkedIn`}>
+                  <LinkedInIcon /> LinkedIn
+                </a>
               </article>
             ))}
           </div>
@@ -63,7 +66,7 @@ export default function About() {
 
       <section className="section">
         <div className="container">
-          <SectionHead split eyebrow="What we do" title="Multiple services, one partner." lead="Every engagement draws on the whole team — so your AI, software and infrastructure are designed to work together." />
+          <SectionHead split eyebrow="What we do" title="Six services, one partner." lead="Every engagement draws on the whole team — so your AI, data, software and infrastructure are designed to work together." />
           <div className="svc-list">
             {services.map((s, i) => {
               const Icon = s.icon

@@ -11,7 +11,7 @@ export default function Services() {
       <PageHeader
         eyebrow="Services"
         title="Everything you need to build, ship and scale."
-        lead="Five focused practices delivered by one accountable team. Pick a service to see exactly what we deliver."
+        lead="Six focused practices delivered by one accountable team. Pick a service to see exactly what we deliver."
       />
       <section className="section section--tight">
         <div className="container">

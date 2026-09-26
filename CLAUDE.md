@@ -8,8 +8,8 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Multi-page with react-router-dom (BrowserRouter). Routes in `src/App.jsx`:
   `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, 404.
 - All content lives in `src/data/` — edit there, not in components:
-  `site.js` (contact, nav, tech list, steps), `services.js` (5 services + detail page content),
-  `products.js`, `about.js` (team of 4 + values), `blog.js` (posts).
+  `site.js` (contact, nav, tech list, steps, home use cases), `services.js` (6 services + detail page content),
+  `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts).
 - Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
 - Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
 - Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`), skipped for reduced-motion users.
@@ -21,7 +21,8 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Full logo (A mark + AFTR + SOLUTIONS) in hero and intro; horizontal lockup in navbar/footer; A mark only for favicon.
 - Everything must look right in both themes and at 390px mobile width.
 
-- Services: AI Automation & Agents, DevOps & Cloud, Development (Websites & Apps), Managed Infrastructure, AI Solutions.
+- Services: AI Automation & Agents, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure, AI Solutions, Data Engineering.
+- Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).
 - Any card that lists services must have the hover treatment (lift, deep shadow, gradient border, cursor spotlight).
 
 ## Commands
