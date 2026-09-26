@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom'
+import { ArrowUpRight } from 'lucide-react'
 import ServiceCard from '../components/ServiceCard'
 import { PageHeader, SectionHead, CTA, TechMarquee } from '../components/Common'
-import { services } from '../data/services'
-import { steps } from '../data/site'
+import { services, getService } from '../data/services'
+import { steps, useCases } from '../data/site'
 import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function Services() {
@@ -17,6 +19,25 @@ export default function Services() {
         <div className="container">
           <div className="scards scards--wide">
             {services.map((s, i) => <ServiceCard key={s.slug} service={s} index={i} variant="large" />)}
+          </div>
+        </div>
+      </section>
+      <section className="section section--alt">
+        <div className="container">
+          <SectionHead split eyebrow="What we can build for you" title="Real problems we solve." lead="A few examples of what businesses come to us for — each one delivered end-to-end by our team." />
+          <div className="usecases">
+            {useCases.map((u, i) => {
+              const svc = getService(u.service)
+              const Icon = svc.icon
+              return (
+                <Link to={`/services/${u.service}`} className="usecase reveal" key={u.title} style={{ '--d': `${(i % 3) * 80}ms` }}>
+                  <span className="usecase__tag"><Icon size={15} strokeWidth={1.8} /> {svc.title}</span>
+                  <h3>{u.title}</h3>
+                  <p>{u.text}</p>
+                  <ArrowUpRight className="usecase__arrow" size={18} />
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>

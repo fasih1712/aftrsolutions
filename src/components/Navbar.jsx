@@ -52,7 +52,7 @@ export default function Navbar({ theme, onToggleTheme }) {
                 </div>
               </div>
             ) : (
-              <NavLink key={l.to} to={l.to} className="nav__link">{l.label}</NavLink>
+              <NavLink key={l.to} to={l.to} end={l.end} className="nav__link">{l.label}</NavLink>
             )
           )}
         </nav>
@@ -86,7 +86,7 @@ export default function Navbar({ theme, onToggleTheme }) {
             <Link key={s.slug} to={`/services/${s.slug}`}>{s.title}</Link>
           ))}
         </div>
-        {nav.filter((l) => !l.hasMenu).map((l) => (
+        {nav.filter((l) => !l.hasMenu && l.to !== '/').map((l) => (
           <NavLink key={l.to} to={l.to}>{l.label}</NavLink>
         ))}
         <Link to="/contact" className="btn btn--primary">Let’s talk</Link>

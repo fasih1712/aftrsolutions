@@ -13,6 +13,7 @@ export const site = {
 }
 
 export const nav = [
+  { label: 'Home', to: '/', end: true },
   { label: 'Services', to: '/services', hasMenu: true },
   { label: 'Products', to: '/products' },
   { label: 'About', to: '/about' },

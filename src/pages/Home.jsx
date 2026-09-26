@@ -6,11 +6,8 @@ import { SectionHead, CTA, TechMarquee, LinkedInIcon } from '../components/Commo
 import { services } from '../data/services'
 import { products } from '../data/products'
 import { team } from '../data/about'
-import { posts } from '../data/blog'
-import PostCard from '../components/PostCard'
 import { initials, slugify } from '../utils'
-import { steps, useCases } from '../data/site'
-import { getService } from '../data/services'
+import { technologies } from '../data/site'
 import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function Home() {
@@ -27,26 +24,55 @@ export default function Home() {
             Technology, engineered<br className="br-desktop" /> for what comes next.
           </h1>
           <p className="hero__lead reveal">
-            We design, build and run the AI, cloud, data, software and infrastructure that modern
-            businesses depend on — secure, scalable and made to last.
+            AFTR Solutions is a technology company that designs, builds and runs the AI, cloud, data,
+            software and infrastructure modern businesses depend on — secure, scalable and made to last.
           </p>
           <div className="hero__cta reveal">
             <Link to="/contact" className="btn btn--primary">Start a project <ArrowRight size={18} /></Link>
-            <Link to="/services" className="btn btn--ghost">Explore services</Link>
+            <a href="#about" className="btn btn--ghost">Who we are</a>
           </div>
         </div>
-        <a href="#tech" className="hero__scroll" aria-label="Scroll down"><ArrowDown size={18} /></a>
+        <a href="#about" className="hero__scroll" aria-label="Scroll down"><ArrowDown size={18} /></a>
       </section>
 
-      <div id="tech"><TechMarquee /></div>
+      <section className="section" id="about">
+        <div className="container who">
+          <div className="who__text reveal">
+            <p className="eyebrow">Who we are</p>
+            <h2 className="section__title">Your technology partner, from idea to everyday operations.</h2>
+            <p>
+              AFTR Solutions is a Karachi-based technology company founded by four engineers. We help
+              businesses put the right technology in place — and keep it working. That means building
+              websites, apps and ERP systems, moving workloads to the cloud, organising data, automating
+              work with AI, and managing the IT infrastructure behind it all.
+            </p>
+            <p>
+              Instead of juggling separate agencies for the website, the servers and the automation, you
+              get one team that owns the whole picture — and stays with you after launch.
+            </p>
+            <div className="who__actions">
+              <Link to="/about" className="btn btn--primary">About the company <ArrowRight size={18} /></Link>
+              <Link to="/services" className="btn btn--ghost">Our services</Link>
+            </div>
+          </div>
+          <div className="facts reveal" style={{ '--d': '120ms' }}>
+            <div className="fact"><strong>{team.length}</strong><span>Co-founders, hands-on in every project</span></div>
+            <div className="fact"><strong>{services.length}</strong><span>Services under one roof</span></div>
+            <div className="fact"><strong>{products.filter((p) => p.own).length}</strong><span>In-house products, incl. Phelix ERP</span></div>
+            <div className="fact"><strong>{technologies.length}+</strong><span>Technologies and platforms we work with</span></div>
+          </div>
+        </div>
+      </section>
+
+      <TechMarquee />
 
       <section className="section">
         <div className="container">
           <SectionHead
             split
-            eyebrow="What we do"
-            title="Six practices. One accountable team."
-            lead="Engage us for a single project or as your long-term technology partner — every service has a dedicated page with the details."
+            eyebrow="Services we provide"
+            title="Six services. One accountable team."
+            lead="Engage us for a single project or as your long-term technology partner. Each service has its own page with full details."
           />
           <div className="scards">
             {services.map((s, i) => <ServiceCard key={s.slug} service={s} index={i} />)}
@@ -73,26 +99,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <SectionHead split eyebrow="What we can build for you" title="Real problems we solve." lead="A few examples of what businesses come to us for — each one delivered end-to-end by our team." />
-          <div className="usecases">
-            {useCases.map((u, i) => {
-              const svc = getService(u.service)
-              const Icon = svc.icon
-              return (
-                <Link to={`/services/${u.service}`} className="usecase reveal" key={u.title} style={{ '--d': `${(i % 3) * 80}ms` }}>
-                  <span className="usecase__tag"><Icon size={15} strokeWidth={1.8} /> {svc.title}</span>
-                  <h3>{u.title}</h3>
-                  <p>{u.text}</p>
-                  <ArrowUpRight className="usecase__arrow" size={18} />
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
       <section className="section section--alt">
         <div className="container">
           <SectionHead split eyebrow="Products" title="Products we built." lead="Our own Phelix ERP, Scrap Management system and AI chatbots for WhatsApp and websites — ready to deploy and tailored to you." />
@@ -110,19 +116,6 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="container">
-          <SectionHead eyebrow="How we work" title="A clear path from idea to impact." />
-          <ol className="steps">
-            {steps.map((s, i) => (
-              <li className="step reveal" key={s.n} style={{ '--d': `${i * 90}ms` }}>
-                <span className="step__n">{s.n}</span><h3>{s.title}</h3><p>{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="section section--alt">
         <div className="container">
           <SectionHead
             split
@@ -146,15 +139,6 @@ export default function Home() {
           </div>
           <div className="founders__more reveal">
             <Link to="/about" className="btn btn--ghost">Meet the founders <ArrowRight size={18} /></Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHead split eyebrow="Blog" title="Insights from the team." lead="Practical notes on AI, cloud and building reliable software." />
-          <div className="posts">
-            {posts.slice(0, 3).map((p, i) => <PostCard key={p.slug} post={p} index={i} />)}
           </div>
         </div>
       </section>

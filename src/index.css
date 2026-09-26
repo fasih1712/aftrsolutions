@@ -615,6 +615,26 @@ button { font: inherit; color: inherit; }
 .faq__a > div { overflow: hidden; }
 .faq__a p { padding: 0 40px 24px 0; color: var(--text-2); font-size: 16px; }
 
+/* Home: who we are */
+.who { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 72px; align-items: center; }
+.who__text { display: grid; gap: 20px; }
+.who__text .section__title { margin-bottom: 4px; }
+.who__text p:not(.eyebrow) { font-size: clamp(16.5px, 1.4vw, 18.5px); color: var(--text-2); line-height: 1.7; }
+.who__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fact {
+  padding: 28px 24px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border);
+  display: grid; gap: 8px; align-content: start;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.fact:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+.fact strong {
+  font-family: var(--font-display); font-size: clamp(40px, 4.5vw, 56px); line-height: 1; font-weight: 700; letter-spacing: -0.04em;
+  background: linear-gradient(180deg, var(--text), color-mix(in srgb, var(--text) 40%, transparent));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.fact span { font-size: 14px; color: var(--text-2); }
+
 /* Home: help strip under the service grid */
 .help-strip {
   margin-top: 22px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
@@ -902,7 +922,7 @@ button { font: inherit; color: inherit; }
 @media (max-width: 880px) {
   .nav__links, .nav__cta { display: none; }
   .nav__burger { display: grid; }
-  .section__head--split, .why, .contact__inner, .svc-hero, .svc-split, .about-teaser, .story, .product-row { grid-template-columns: 1fr; gap: 32px; }
+  .section__head--split, .why, .who, .contact__inner, .svc-hero, .svc-split, .about-teaser, .story, .product-row { grid-template-columns: 1fr; gap: 32px; }
   .product-row { gap: 0; }
   .product-row--flip .product-row__art { order: 0; }
   .product-row__art { min-height: 240px; }
@@ -918,6 +938,8 @@ button { font: inherit; color: inherit; }
   .nav__brand .logo-swap { height: 34px; }
   .scards, .products, .steps, .posts, .posts--two, .offerings, .scards--four, .team, .mini-steps, .usecases, .founders { grid-template-columns: 1fr; }
   .help-strip { padding: 20px; }
+  .facts { gap: 12px; }
+  .fact { padding: 22px 18px; }
   .mini-steps { grid-template-columns: 1fr 1fr; }
   .step, .step + .step { padding: 28px 0 4px; border-left: none; }
   .step + .step { border-top: 1px solid var(--border); margin-top: 16px; }
