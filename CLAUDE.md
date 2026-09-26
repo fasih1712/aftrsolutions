@@ -5,14 +5,24 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 ## Stack
 - React 19 + Vite, plain CSS (no Tailwind), lucide-react icons.
 - Light + dark theme via `data-theme` on `<html>`; tokens in `src/index.css` (`:root` and `:root[data-theme='dark']`).
-- All site copy lives in `src/data/site.js` — edit content there, not in components.
-- Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS.
+- Multi-page with react-router-dom (BrowserRouter). Routes in `src/App.jsx`:
+  `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, 404.
+- All content lives in `src/data/` — edit there, not in components:
+  `site.js` (contact, nav, tech list, steps), `services.js` (5 services + detail page content),
+  `products.js`, `about.js` (team of 4 + values), `blog.js` (posts).
+- Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
+- Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
+- Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`), skipped for reduced-motion users.
+- Vite `base: '/'` is required for nested routes; nginx `try_files ... /index.html` handles SPA fallback.
 - Favicons (A mark only) in `public/`.
 
 ## Design rules
 - Minimal, elegant, monochrome (Apple / Systems Ltd / 10Pearls style). No bright accent colours.
-- Full "AFTR Solutions" logo in hero; horizontal lockup in navbar/footer; A mark only for favicon.
+- Full logo (A mark + AFTR + SOLUTIONS) in hero and intro; horizontal lockup in navbar/footer; A mark only for favicon.
 - Everything must look right in both themes and at 390px mobile width.
+
+- Services: AI Automation & Agents, DevOps & Cloud, Development (Websites & Apps), Managed Infrastructure, AI Solutions.
+- Any card that lists services must have the hover treatment (lift, deep shadow, gradient border, cursor spotlight).
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run preview`

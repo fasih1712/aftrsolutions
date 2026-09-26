@@ -13,22 +13,36 @@ npm run build      # production build in dist/
 npm run preview    # preview the production build
 ```
 
+## Pages
+
+`/` Home · `/services` · `/services/:slug` (one page per service) · `/products` · `/about` · `/blog` · `/blog/:slug` · `/contact`
+
 ## Project structure
 
 ```
 src/
-  data/site.js          ← ALL website text: services, products, contact info (edit here)
-  components/           ← Navbar, Hero, Services, Products, Approach, Why, Contact, Footer
-  hooks/useTheme.js     ← light/dark theme logic
-  hooks/useReveal.js    ← scroll-in animations
-  assets/               ← logos (light + dark versions)
-  index.css             ← design tokens (colors for both themes) + all styles
+  data/                 ← ALL content (edit here)
+    site.js               contact info, navigation, technologies
+    services.js           the 5 services + their detail-page content
+    products.js           products
+    about.js              team (4 members) + values
+    blog.js               blog posts
+  pages/                ← one file per page
+  components/           ← Navbar, Footer, Intro (opening animation), ServiceCard, …
+  hooks/                ← theme, scroll reveal, page title
+  assets/               ← logos (light + dark) and intro animation pieces
+  index.css             ← design tokens for both themes + all styles
 public/                 ← favicons (A mark)
 ```
+
+## Adding a blog post
+
+Copy an object in `src/data/blog.js`, give it a new `slug`, and put it at the top of the list.
 
 ## Before going live
 
 - Update `phone` and social links in `src/data/site.js` (email is `info@aftrsolutions.com`).
+- Replace team names / roles / photos in `src/data/about.js`, and review the About page story and blog posts.
 - The contact form currently opens the visitor's email app (no backend). To receive
   submissions directly, connect it to Formspree, EmailJS or your own API in
   `src/components/Contact.jsx`.

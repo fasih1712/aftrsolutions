@@ -1,9 +1,9 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// base './' keeps asset paths relative, so the build works on GitHub Pages
-// (fasih1712.github.io/aftrsolutions/), a custom domain, or any static host.
+// base '/' — absolute asset paths so nested routes (/services/devops-cloud) load assets correctly.
+// nginx.conf falls back to index.html for client-side routing.
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: '/',
 })
