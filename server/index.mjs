@@ -111,7 +111,8 @@ async function streamGemini(messages, write, signal) {
       const stream = await gemini.models.generateContentStream({
         model,
         contents,
-        config: { systemInstruction: SYSTEM, maxOutputTokens: 1024, temperature: 0.4, abortSignal: signal },
+        // maxOutputTokens also covers the model's internal thinking, so leave plenty of room
+        config: { systemInstruction: SYSTEM, maxOutputTokens: 8192, temperature: 0.4, abortSignal: signal },
       })
       for await (const chunk of stream) {
         const text = chunk.text
