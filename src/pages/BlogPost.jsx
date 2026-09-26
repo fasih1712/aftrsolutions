@@ -9,7 +9,7 @@ import NotFound from './NotFound'
 export default function BlogPost() {
   const { slug } = useParams()
   const post = getPost(slug)
-  usePageTitle(post?.title)
+  usePageTitle(post?.title, post?.excerpt)
   if (!post) return <NotFound />
   const more = posts.filter((p) => p.slug !== slug).slice(0, 2)
 

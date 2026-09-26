@@ -30,7 +30,10 @@ export default function Footer() {
           <ul>
             <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
             <li>{site.location}</li>
-            <li><a href={site.social.linkedin}>LinkedIn</a> · <a href={site.social.github} target="_blank" rel="noreferrer">GitHub</a></li>
+            <li>
+              {site.social.linkedin && <><a href={site.social.linkedin} target="_blank" rel="noreferrer">LinkedIn</a> · </>}
+              <a href={site.social.github} target="_blank" rel="noreferrer">GitHub</a>
+            </li>
           </ul>
         </div>
       </div>

@@ -3,11 +3,11 @@
 export const site = {
   name: 'AFTR Solutions',
   email: 'info@aftrsolutions.com',
-  // TODO: replace phone and social links with real ones before going live
-  phone: '+92 300 0000000',
+  // TODO: add real phone + LinkedIn before going live
+  phone: '', // e.g. '+92 300 1234567' — hidden while empty
   location: 'Karachi, Pakistan',
   social: {
-    linkedin: '#',
+    linkedin: '', // hidden while empty
     github: 'https://github.com/fasih1712',
   },
 }

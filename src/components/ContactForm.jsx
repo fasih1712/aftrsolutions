@@ -60,7 +60,12 @@ export default function ContactForm({ defaultService = '' }) {
       <button type="submit" className="btn btn--primary btn--block">
         Send message <Send size={16} />
       </button>
-      {sent && <p className="form-note">Your email app should open with the message ready to send.</p>}
+      {sent && (
+        <p className="form-note">
+          Your email app should open with the message ready to send. If it didn’t, email us directly at{' '}
+          <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+      )}
     </form>
   )
 }

@@ -19,7 +19,7 @@ export default function Contact() {
           </p>
           <ul className="contact__list">
             <li><Mail size={18} /> <a href={`mailto:${site.email}`}>{site.email}</a></li>
-            <li><Phone size={18} /> <a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></li>
+            {site.phone && <li><Phone size={18} /> <a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></li>}
             <li><MapPin size={18} /> {site.location}</li>
           </ul>
         </div>

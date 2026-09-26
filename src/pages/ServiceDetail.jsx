@@ -11,7 +11,7 @@ import NotFound from './NotFound'
 export default function ServiceDetail() {
   const { slug } = useParams()
   const service = getService(slug)
-  usePageTitle(service?.title)
+  usePageTitle(service?.title, service?.short)
   if (!service) return <NotFound />
 
   const { icon: Icon, title, subtitle, tagline, intro, offerings, stack, outcomes, faqs } = service
