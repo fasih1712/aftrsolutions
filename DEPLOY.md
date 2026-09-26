@@ -48,12 +48,19 @@ Caddy config (step 3) is a one-time manual step; the workflow does not touch it.
 
 ## AI chat assistant
 
-The site runs a second container, `aftr-chat`, for the website chatbot. It needs an Anthropic API key:
+The site runs a second container, `aftr-chat`, for the website chatbot. It needs one API key.
 
-1. Create a key at https://console.anthropic.com (Settings > API keys) and add billing credit.
-2. In GitHub: repo **Settings > Secrets and variables > Actions > New repository secret**, name `ANTHROPIC_API_KEY`.
+**Free (recommended): Google Gemini**
+1. Open https://aistudio.google.com/apikey, sign in with a Google account and click **Create API key**. No credit card needed.
+2. In GitHub: repo **Settings > Secrets and variables > Actions > New repository secret**, name `GEMINI_API_KEY`, paste the key.
 3. Re-run the **Deploy to AWS EC2** workflow (Actions tab > Run workflow), or push any commit.
 
-The deploy writes the key to `~/aftrsolutions/.env` on the server (mode 600, not in git). Check it with
-`curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true}` means the chat button is live.
+The free tier is rate limited (a few hundred to about a thousand answers a day, depending on the model). When a model hits its limit the
+server falls back to the next one in `GEMINI_MODELS` (default `gemini-flash-latest,gemini-flash-lite-latest`); if all are busy, visitors
+see a polite "try again in a minute" message. On the free tier Google may use prompts and replies to improve its products.
+
+**Paid alternative: Claude** - add `ANTHROPIC_API_KEY` instead (used only when no Gemini key is set).
+
+The deploy writes the keys to `~/aftrsolutions/.env` on the server (mode 600, not in git). Check with
+`curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true,"provider":"gemini"}` means the chat button is live.
 Without a key the site works normally and the chat button stays hidden.

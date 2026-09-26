@@ -1,22 +1,31 @@
 // AFTR website assistant: a small HTTP service that answers visitor questions about
-// AFTR Solutions using Claude. nginx proxies /api/* here (see nginx.conf).
+// AFTR Solutions. nginx proxies /api/* here (see nginx.conf).
 //
-//   GET  /api/health -> { ready }   (ready = an API key is configured)
+// Provider, picked from whichever key is set:
+//   GEMINI_API_KEY    -> Google Gemini free tier (default; models from GEMINI_MODELS)
+//   ANTHROPIC_API_KEY -> Claude (paid), used only when no Gemini key is set
+//
+//   GET  /api/health -> { ready, provider }
 //   POST /api/chat   -> streams the reply as plain text
 //        body: { messages: [{ role: 'user' | 'assistant', content: string }, ...] }
 import http from 'node:http'
 import { readFileSync } from 'node:fs'
 import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenAI, ApiError as GeminiError } from '@google/genai'
 
 const PORT = Number(process.env.PORT || 8787)
-const MODEL = 'claude-opus-5'
+const CLAUDE_MODEL = 'claude-opus-5'
+// Tried in order; the next one is used when a model is rate limited or unavailable.
+const GEMINI_MODELS = (process.env.GEMINI_MODELS || 'gemini-flash-latest,gemini-flash-lite-latest').split(',').map((m) => m.trim()).filter(Boolean)
 const MAX_TURNS = 20
 const MAX_CHARS = 2000
 const RATE_LIMIT = { windowMs: 10 * 60 * 1000, max: 30 } // requests per IP per window
 
 const knowledge = readFileSync(new URL('./knowledge.md', import.meta.url), 'utf8')
-const ready = Boolean(process.env.ANTHROPIC_API_KEY)
-const client = ready ? new Anthropic() : null
+const provider = process.env.GEMINI_API_KEY ? 'gemini' : process.env.ANTHROPIC_API_KEY ? 'claude' : null
+const ready = Boolean(provider)
+const gemini = provider === 'gemini' ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null
+const claude = provider === 'claude' ? new Anthropic() : null
 
 const SYSTEM = `You are the AFTR Assistant, the chat assistant on the AFTR Solutions website (aftrsolutions.com). You talk with visitors who are curious about the company, usually potential clients.
 
@@ -91,6 +100,53 @@ function cleanMessages(input) {
 
 const FALLBACK = 'Sorry, I can’t help with that here. For anything about AFTR Solutions, feel free to ask, or reach the team at info@aftrsolutions.com.'
 
+// Google Gemini (free tier). Falls through the model list on quota / availability errors,
+// but only before any text has been sent.
+async function streamGemini(messages, write, signal) {
+  const contents = messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }))
+  let lastError
+  for (const model of GEMINI_MODELS) {
+    let started = false
+    try {
+      const stream = await gemini.models.generateContentStream({
+        model,
+        contents,
+        config: { systemInstruction: SYSTEM, maxOutputTokens: 1024, temperature: 0.4, abortSignal: signal },
+      })
+      for await (const chunk of stream) {
+        const text = chunk.text
+        if (text) { write(text); started = true }
+      }
+      if (!started) write(FALLBACK)
+      return
+    } catch (error) {
+      lastError = error
+      const retryable = error instanceof GeminiError && [404, 429, 500, 503].includes(error.status)
+      if (started || !retryable || signal.aborted) throw error
+      console.warn(`Gemini ${model} unavailable (${error.status}), trying next model`)
+    }
+  }
+  throw lastError
+}
+
+// Claude (paid). Used only when ANTHROPIC_API_KEY is set and GEMINI_API_KEY is not.
+async function streamClaude(messages, write, signal, state) {
+  const stream = claude.beta.messages.stream({
+    model: CLAUDE_MODEL,
+    max_tokens: 2048,
+    betas: ['server-side-fallback-2026-07-01'],
+    fallbacks: 'default',
+    output_config: { effort: 'low' },
+    system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],
+    messages,
+  }, { signal })
+  for await (const event of stream) {
+    if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') write(event.delta.text)
+  }
+  const final = await stream.finalMessage()
+  if (!state.wrote || final.stop_reason === 'refusal') write(state.wrote ? `\n\n${FALLBACK}` : FALLBACK)
+}
+
 async function handleChat(req, res) {
   if (!ready) return sendJson(res, 503, { error: 'Assistant is not configured.' })
   const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown')
@@ -113,49 +169,29 @@ async function handleChat(req, res) {
   const abort = new AbortController()
   res.on('close', () => { if (!res.writableEnded) abort.abort() })
 
-  let wrote = false
+  const write = (text) => { res.write(text); state.wrote = true }
+  const state = { wrote: false }
   try {
-    const stream = client.beta.messages.stream({
-      model: MODEL,
-      max_tokens: 2048,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'low' },
-      system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],
-      messages,
-    }, { signal: abort.signal })
-
-    for await (const event of stream) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-        res.write(event.delta.text)
-        wrote = true
-      }
-    }
-    const final = await stream.finalMessage()
-    if (!wrote || final.stop_reason === 'refusal') res.write(wrote ? `\n\n${FALLBACK}` : FALLBACK)
+    if (provider === 'gemini') await streamGemini(messages, write, abort.signal)
+    else await streamClaude(messages, write, abort.signal, state)
   } catch (error) {
     if (abort.signal.aborted) return
-    if (error instanceof Anthropic.RateLimitError) {
-      console.error('Claude rate limit:', error.message)
-    } else if (error instanceof Anthropic.AuthenticationError) {
-      console.error('Claude auth failed: check ANTHROPIC_API_KEY')
-    } else if (error instanceof Anthropic.APIError) {
-      console.error(`Claude API error ${error.status}:`, error.message)
-    } else {
-      console.error('Chat error:', error)
-    }
-    res.write(wrote
+    const busy = (error instanceof GeminiError && error.status === 429) || error instanceof Anthropic.RateLimitError
+    console.error('Chat error:', error?.status ?? '', error?.message ?? error)
+    res.write(state.wrote
       ? '\n\n(Sorry, the reply was cut off. Please try again.)'
-      : 'Sorry, I’m having trouble answering right now. Please try again in a moment, or email info@aftrsolutions.com.')
+      : busy
+        ? 'I’m getting a lot of questions right now. Please try again in a minute, or email info@aftrsolutions.com.'
+        : 'Sorry, I’m having trouble answering right now. Please try again in a moment, or email info@aftrsolutions.com.')
   }
   res.end()
 }
 
 http.createServer(async (req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname
-  if (req.method === 'GET' && path === '/api/health') return sendJson(res, 200, { ready })
+  if (req.method === 'GET' && path === '/api/health') return sendJson(res, 200, { ready, provider })
   if (req.method === 'POST' && path === '/api/chat') return handleChat(req, res)
   sendJson(res, 404, { error: 'Not found' })
 }).listen(PORT, () => {
-  console.log(`AFTR assistant listening on :${PORT} (${ready ? 'ready' : 'no ANTHROPIC_API_KEY, chat disabled'})`)
+  console.log(`AFTR assistant listening on :${PORT} (${ready ? `ready, ${provider}${provider === 'gemini' ? `: ${GEMINI_MODELS.join(' > ')}` : ''}` : 'no GEMINI_API_KEY or ANTHROPIC_API_KEY, chat disabled'})`)
 })

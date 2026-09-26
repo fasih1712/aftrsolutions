@@ -29,9 +29,10 @@ jobs:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         with:
-          envs: ANTHROPIC_API_KEY
+          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
@@ -45,10 +46,13 @@ jobs:
             cd "$APP_DIR"
             git fetch --all
             git reset --hard origin/main
-            # Chat assistant key: written from the GitHub secret, kept out of git (.gitignore)
-            if [ -n "$ANTHROPIC_API_KEY" ]; then
+            # Chat assistant keys: written from GitHub secrets, kept out of git (.gitignore).
+            # GEMINI_API_KEY = free tier (used first), ANTHROPIC_API_KEY = paid alternative.
+            if [ -n "$GEMINI_API_KEY$ANTHROPIC_API_KEY" ]; then
               umask 077
-              printf 'ANTHROPIC_API_KEY=%s\n' "$ANTHROPIC_API_KEY" > .env
+              : > .env
+              if [ -n "$GEMINI_API_KEY" ]; then printf 'GEMINI_API_KEY=%s\n' "$GEMINI_API_KEY" >> .env; fi
+              if [ -n "$ANTHROPIC_API_KEY" ]; then printf 'ANTHROPIC_API_KEY=%s\n' "$ANTHROPIC_API_KEY" >> .env; fi
             fi
             docker compose up -d --build
             docker image prune -f

@@ -30,10 +30,10 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 
 ## AI chat assistant
 - Widget: `src/components/ChatWidget.jsx` (bottom-right, mounted in the App layout). Hidden unless `GET /api/health` returns `{ ready: true }`.
-- Backend: `server/index.mjs` (Node + `@anthropic-ai/sdk`, model `claude-opus-5`, effort low, `fallbacks: "default"`), streams plain text from `POST /api/chat`. Rate limit 30 req / 10 min per IP.
+- Backend: `server/index.mjs`, streams plain text from `POST /api/chat`. Provider: Google Gemini free tier via `@google/genai` when `GEMINI_API_KEY` is set (models `GEMINI_MODELS`, falls back on 429/404/5xx); Claude (`claude-opus-5`, paid) only if just `ANTHROPIC_API_KEY` is set. Owner wants it free, so Gemini is the live provider. Rate limit 30 req / 10 min per IP.
 - Knowledge: `scripts/build-knowledge.mjs` turns `src/data/*` into `server/knowledge.md` (generated, gitignored), so the bot only knows what the site says. Founders = name + role only; no personal info, no prices. Data files must stay importable by plain Node (no `import.meta.glob` in `src/data/*` except `teamPhotos.js`).
-- Key: GitHub secret `ANTHROPIC_API_KEY` -> deploy writes `.env` on the server -> `aftr-chat` container. nginx proxies `/api/` to `aftr-chat:8787`.
-- Local: `cd server && npm i && ANTHROPIC_API_KEY=... npm start`, then `npm run dev` (Vite proxies `/api`).
+- Key: GitHub secret `GEMINI_API_KEY` (or `ANTHROPIC_API_KEY`) -> deploy writes `.env` on the server -> `aftr-chat` container. nginx proxies `/api/` to `aftr-chat:8787`.
+- Local: `cd server && npm i && GEMINI_API_KEY=... npm start`, then `npm run dev` (Vite proxies `/api`).
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run preview`

@@ -6,6 +6,7 @@
     "start": "node index.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.128.0"
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@google/genai": "^2.24.0"
   }
 }

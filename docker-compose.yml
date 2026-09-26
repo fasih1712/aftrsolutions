@@ -17,8 +17,9 @@ services:
       - aftr-chat
 
   # Website AI assistant. Only reachable by nginx (aftr-web) on the compose network.
-  # ANTHROPIC_API_KEY comes from .env next to this file (written by the deploy workflow
-  # from the GitHub secret). Without it the chat widget simply stays hidden.
+  # Keys come from .env next to this file (written by the deploy workflow from GitHub
+  # secrets). GEMINI_API_KEY (free tier) is used first; ANTHROPIC_API_KEY is the paid
+  # alternative. With neither, the chat widget simply stays hidden.
   aftr-chat:
     build:
       context: .
@@ -27,4 +28,5 @@ services:
     container_name: aftr-chat
     restart: unless-stopped
     environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
