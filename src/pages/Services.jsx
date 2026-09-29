@@ -17,6 +17,7 @@ export default function Services() {
       />
       <section className="section section--tight">
         <div className="container">
+          <h2 className="sr-only">Our services</h2>
           <div className="scards scards--wide">
             {services.map((s, i) => <ServiceCard key={s.slug} service={s} index={i} variant="large" />)}
           </div>

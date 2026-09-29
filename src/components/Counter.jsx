@@ -27,5 +27,10 @@ export default function Counter({ to, suffix = '', duration = 1600 }) {
     return () => { observer.disconnect(); cancelAnimationFrame(frame) }
   }, [to, duration])
 
-  return <span ref={ref} aria-label={`${to}${suffix}`}>{value}{suffix}</span>
+  return (
+    <>
+      <span ref={ref} aria-hidden="true">{value}{suffix}</span>
+      <span className="sr-only">{to}{suffix}</span>
+    </>
+  )
 }

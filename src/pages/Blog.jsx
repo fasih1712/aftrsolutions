@@ -14,6 +14,7 @@ export default function Blog() {
       />
       <section className="section section--tight">
         <div className="container">
+          <h2 className="sr-only">Articles</h2>
           <div className="posts">
             {posts.map((p, i) => <PostCard key={p.slug} post={p} index={i} />)}
           </div>

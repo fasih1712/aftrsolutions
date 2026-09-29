@@ -13,11 +13,11 @@ export default function Footer() {
           <p>AI automation, cloud, development and managed infrastructure for businesses that plan to grow.</p>
         </div>
         <div>
-          <h4>Services</h4>
+          <h2 className="footer__title">Services</h2>
           <ul>{services.map((s) => <li key={s.slug}><Link to={`/services/${s.slug}`}>{s.title}</Link></li>)}</ul>
         </div>
         <div>
-          <h4>Company</h4>
+          <h2 className="footer__title">Company</h2>
           <ul>
             <li><Link to="/about">About us</Link></li>
             <li><Link to="/products">Products</Link></li>
@@ -26,7 +26,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h4>Get in touch</h4>
+          <h2 className="footer__title">Get in touch</h2>
           <ul>
             <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
             <li>{site.location}</li>

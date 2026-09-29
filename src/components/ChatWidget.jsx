@@ -150,7 +150,7 @@ export default function ChatWidget() {
             <div key={i} className={`chat__msg chat__msg--${m.role}`} dir="auto">
               {m.content
                 ? <Rich text={m.content} />
-                : <span className="chat__typing" aria-label="Assistant is typing"><i /><i /><i /></span>}
+                : <span className="chat__typing"><i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" /><span className="sr-only">Assistant is typing</span></span>}
             </div>
           ))}
           {fresh && (
