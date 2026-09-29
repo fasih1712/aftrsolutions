@@ -69,6 +69,8 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState(load)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
+  // Screen readers hear each reply once, when it is complete, not every streamed chunk.
+  const [announce, setAnnounce] = useState('')
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const fabRef = useRef(null)
@@ -106,7 +108,12 @@ export default function ChatWidget() {
     setMessages([...history, { role: 'assistant', content: '' }])
     setInput('')
     setBusy(true)
-    const update = (reply) => setMessages([...history, { role: 'assistant', content: reply }])
+    setAnnounce('Assistant is typing')
+    let last = ''
+    const update = (reply) => {
+      last = reply
+      setMessages([...history, { role: 'assistant', content: reply }])
+    }
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -133,9 +140,21 @@ export default function ChatWidget() {
     } catch {
       update(`Sorry, I couldn’t connect. Please try again, or email us at ${site.email}.`)
     } finally {
+      setAnnounce(last)
       setBusy(false)
       inputRef.current?.focus()
     }
+  }
+
+  // Keep Tab and Shift+Tab inside the open panel.
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return
+    const items = [...e.currentTarget.querySelectorAll('button:not(:disabled), textarea, a[href]')]
+    if (!items.length) return
+    const first = items[0]
+    const last = items[items.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
   }
 
   if (!ready) return null
@@ -143,7 +162,7 @@ export default function ChatWidget() {
 
   return (
     <div className={`chat ${open ? 'chat--open' : ''}`}>
-      <section id="aftr-chat-panel" className="chat__panel" role="dialog" aria-label="AFTR Assistant" aria-hidden={!open} inert={!open}>
+      <section id="aftr-chat-panel" className="chat__panel" role="dialog" aria-label="AFTR Assistant" aria-hidden={!open} inert={!open} onKeyDown={trapFocus}>
         <header className="chat__head">
           <span className="chat__avatar"><BotMessageSquare size={20} strokeWidth={1.7} /></span>
           <div className="chat__title">
@@ -160,12 +179,12 @@ export default function ChatWidget() {
           </button>
         </header>
 
-        <div className="chat__list" ref={listRef} aria-live="polite">
+        <div className="chat__list" ref={listRef}>
           {messages.map((m, i) => (
             <div key={i} className={`chat__msg chat__msg--${m.role}`} dir="auto">
               {m.content
                 ? <Rich text={m.content} />
-                : <span className="chat__typing"><i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" /><span className="sr-only">Assistant is typing</span></span>}
+                : <span className="chat__typing" aria-hidden="true"><i /><i /><i /></span>}
             </div>
           ))}
           {fresh && (
@@ -174,6 +193,7 @@ export default function ChatWidget() {
             </div>
           )}
         </div>
+        <p className="sr-only" aria-live="polite">{announce}</p>
 
         <form className="chat__form" onSubmit={(e) => { e.preventDefault(); send(input) }}>
           <textarea
