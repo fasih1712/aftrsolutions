@@ -8,7 +8,7 @@
   --surface: #ffffff;
   --text: #1d1d1f;
   --text-2: #515154;
-  --muted: #86868b;
+  --muted: #6e6e73;
   --border: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.14);
   --accent: #1c2230;          /* graphite navy from the A mark */
@@ -30,7 +30,7 @@
   --nav-bg: rgba(255, 255, 255, 0.72);
   --statement-bg: #0b0c10;
   --statement-text: #f5f5f7;
-  --statement-dim: #6e6e73;
+  --statement-dim: #8e8e96;
 
   --radius: 22px;
   --radius-sm: 14px;
@@ -45,7 +45,7 @@
   --surface: #15171d;
   --text: #f5f5f7;
   --text-2: #b4b4bb;
-  --muted: #7c7c84;
+  --muted: #8e8e96;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
   --accent: #d4d8e0;          /* brushed silver from the dark-theme mark */
@@ -67,7 +67,7 @@
   --nav-bg: rgba(10, 11, 14, 0.7);
   --statement-bg: #f5f5f7;
   --statement-text: #1d1d1f;
-  --statement-dim: #9a9aa0;
+  --statement-dim: #6e6e73;
   color-scheme: dark;
 }
 
@@ -394,8 +394,8 @@ button { font: inherit; color: inherit; }
 }
 .marquee__row { display: flex; width: max-content; gap: 56px; animation: scroll 55s linear infinite; }
 .marquee__track:hover .marquee__row { animation-play-state: paused; }
-.marquee__item { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--text-2); white-space: nowrap; opacity: 0.7; transition: opacity 0.2s; }
-.marquee__item:hover { opacity: 1; }
+.marquee__item { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--muted); white-space: nowrap; transition: color 0.2s; }
+.marquee__item:hover { color: var(--text); }
 @keyframes scroll { to { transform: translateX(calc(-50% - 28px)); } }
 
 /* ============ Sections ============ */
@@ -443,7 +443,7 @@ button { font: inherit; color: inherit; }
 .scard::after {
   content: ''; position: absolute; left: 10%; right: 10%; bottom: -1px; height: 1px; z-index: 2;
   background: linear-gradient(90deg, transparent, var(--text), transparent);
-  opacity: 0; transform: scaleX(0.3);
+  opacity: 0; transform: scaleX(0.3); pointer-events: none;
   transition: opacity 0.5s, transform 0.6s var(--ease);
 }
 .scard__spot {
@@ -454,7 +454,7 @@ button { font: inherit; color: inherit; }
 .scard__num {
   position: absolute; top: 18px; right: 24px;
   font-family: var(--font-display); font-size: 64px; font-weight: 700; line-height: 1;
-  color: var(--text); opacity: 0.05; letter-spacing: -0.04em;
+  color: var(--text); opacity: 0.10; letter-spacing: -0.04em; pointer-events: none;
   transition: opacity 0.5s, transform 0.6s var(--ease);
 }
 .scard__icon {
@@ -480,7 +480,7 @@ button { font: inherit; color: inherit; }
 .scard:hover::before, .scard:focus-visible::before { opacity: 1; }
 .scard:hover::after { opacity: 0.5; transform: scaleX(1); }
 .scard:hover .scard__spot { opacity: 1; }
-.scard:hover .scard__num { opacity: 0.1; transform: translateY(-4px) scale(1.06); }
+.scard:hover .scard__num { opacity: 0.16; transform: translateY(-4px) scale(1.06); }
 .scard:hover .scard__icon {
   background: var(--btn-bg); color: var(--btn-text);
   transform: rotate(-8deg) scale(1.08);
@@ -524,11 +524,11 @@ button { font: inherit; color: inherit; }
 .product:hover .product__icon { transform: translateY(-4px) rotate(-6deg) scale(1.1); }
 .product {
   position: relative; padding: 32px 30px 30px; border-radius: var(--radius); overflow: hidden;
-  background: linear-gradient(160deg, var(--surface), var(--bg-alt));
+  background-color: var(--surface); background-image: linear-gradient(160deg, var(--surface), var(--bg-alt));
   border: 1px solid var(--border); min-height: 340px; display: flex; flex-direction: column;
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease), opacity 0.9s var(--ease);
 }
-:root[data-theme='dark'] .product { background: linear-gradient(160deg, #1a1d24, #111217); }
+:root[data-theme='dark'] .product { background-image: linear-gradient(160deg, #1a1d24, #111217); }
 .product::after {
   content: ''; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%;
   background: radial-gradient(circle, var(--accent-soft), transparent 70%); pointer-events: none;
@@ -556,13 +556,13 @@ button { font: inherit; color: inherit; }
 .product-row--flip .product-row__art { order: 2; }
 .product-row__art {
   position: relative; min-height: 380px; display: grid; place-items: center; color: var(--accent);
-  background: linear-gradient(160deg, var(--bg-alt), var(--surface));
+  background-color: var(--bg-alt); background-image: linear-gradient(160deg, var(--bg-alt), var(--surface));
   overflow: hidden;
 }
 .product-row__art .product__tag { position: absolute; top: 24px; left: 24px; }
 .product-row__art svg { position: relative; transition: transform 0.8s var(--ease); }
 .product-row:hover .product-row__art svg { transform: scale(1.08) rotate(-4deg); }
-.product-row__glow { position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, var(--spot), transparent 65%); }
+.product-row__glow { position: absolute; pointer-events: none; width: 70%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, var(--spot), transparent 65%); }
 .product-row__body { padding: 48px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
 .product-row__body h2 { font-size: clamp(26px, 3vw, 36px); margin: 14px 0 14px; }
 .product-row__body > p { color: var(--text-2); font-size: 17px; }
@@ -832,12 +832,12 @@ button { font: inherit; color: inherit; }
 .member:hover { transform: translateY(-8px); box-shadow: var(--shadow-lift); }
 .member__photo {
   width: 100%; aspect-ratio: 1; border-radius: 18px; overflow: hidden; margin-bottom: 22px;
-  background: linear-gradient(150deg, var(--bg-alt), var(--surface)); border: 1px solid var(--border);
+  background-color: var(--bg-alt); background-image: linear-gradient(150deg, var(--bg-alt), var(--surface)); border: 1px solid var(--border);
   display: grid; place-items: center;
 }
 .member__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease), filter 0.5s var(--ease); }
 .member:hover .member__photo img { transform: scale(1.05); }
-.member__photo span { font-family: var(--font-display); font-size: 54px; font-weight: 700; color: var(--muted); opacity: 0.6; letter-spacing: -0.03em; }
+.member__photo span { font-family: var(--font-display); font-size: 54px; font-weight: 700; color: var(--muted); letter-spacing: -0.03em; }
 .member h3 { font-size: 19px; }
 .member__role { margin-top: 6px; font-size: 13.5px; font-weight: 500; color: var(--muted); }
 .member { display: flex; flex-direction: column; }
@@ -891,13 +891,14 @@ button { font: inherit; color: inherit; }
 .post-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lift); }
 .post-card__art {
   position: relative; aspect-ratio: 16 / 9; overflow: hidden;
-  background:
+  background-color: var(--bg-alt);
+  background-image:
     radial-gradient(circle at 80% 20%, var(--spot), transparent 55%),
     linear-gradient(150deg, var(--bg-alt), var(--surface));
   border-bottom: 1px solid var(--border);
 }
 .post-card__art::before {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background-image:
     linear-gradient(var(--grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
@@ -939,7 +940,7 @@ button { font: inherit; color: inherit; }
   position: relative; overflow: hidden; border-radius: 32px; padding: clamp(56px, 8vw, 96px) clamp(28px, 6vw, 80px);
   background: var(--statement-bg); color: var(--statement-text); text-align: center;
 }
-.cta__glow { position: absolute; inset: -40%; background: radial-gradient(circle at 50% 0%, rgba(150, 165, 200, 0.25), transparent 50%); animation: ctaGlow 8s ease-in-out infinite alternate; }
+.cta__glow { position: absolute; inset: -40%; pointer-events: none; background: radial-gradient(circle at 50% 0%, rgba(150, 165, 200, 0.25), transparent 50%); animation: ctaGlow 8s ease-in-out infinite alternate; }
 @keyframes ctaGlow { to { transform: translateY(10%) scale(1.1); } }
 .cta__box h2 { position: relative; font-size: clamp(32px, 4.6vw, 56px); letter-spacing: -0.035em; }
 .cta__box p { position: relative; margin: 18px auto 0; max-width: 540px; font-size: 18px; color: var(--statement-dim); }
