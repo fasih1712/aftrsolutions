@@ -4,6 +4,7 @@ import { BotMessageSquare, X, ArrowUp, RotateCcw } from 'lucide-react'
 import { site } from '../data/site'
 
 const STORE = 'aftr-chat'
+const OPEN_KEY = 'aftr-chat-open'
 const GREETING = {
   role: 'assistant',
   content: 'Hi! I’m the AFTR Assistant. Ask me anything about our services, products or how we work. You can write in any language, including Urdu and Roman Urdu.',
@@ -21,6 +22,11 @@ function load() {
     if (Array.isArray(saved) && saved.length) return saved
   } catch { /* storage unavailable */ }
   return [GREETING]
+}
+
+// Closed by default; if the visitor opened it, keep it open for the rest of the session.
+function loadOpen() {
+  try { return sessionStorage.getItem(OPEN_KEY) === '1' } catch { return false }
 }
 
 // Minimal, safe markdown: paragraphs, "- " bullets, **bold** and [text](url) links.
@@ -59,12 +65,14 @@ function Rich({ text }) {
 
 export default function ChatWidget() {
   const [ready, setReady] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(loadOpen)
   const [messages, setMessages] = useState(load)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const listRef = useRef(null)
   const inputRef = useRef(null)
+  const fabRef = useRef(null)
+  const wasOpen = useRef(open)
 
   // Only show the assistant when the chat service is configured.
   useEffect(() => {
@@ -77,7 +85,14 @@ export default function ChatWidget() {
   }, [messages])
 
   useEffect(() => {
-    if (!open) return
+    try { sessionStorage.setItem(OPEN_KEY, open ? '1' : '0') } catch { /* ignore */ }
+    // after closing, give focus back to the launcher
+    if (!open) {
+      if (wasOpen.current) fabRef.current?.focus()
+      wasOpen.current = false
+      return
+    }
+    wasOpen.current = true
     inputRef.current?.focus()
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
     window.addEventListener('keydown', onKey)
@@ -128,7 +143,7 @@ export default function ChatWidget() {
 
   return (
     <div className={`chat ${open ? 'chat--open' : ''}`}>
-      <section className="chat__panel" role="dialog" aria-label="AFTR Assistant" aria-hidden={!open}>
+      <section id="aftr-chat-panel" className="chat__panel" role="dialog" aria-label="AFTR Assistant" aria-hidden={!open} inert={!open}>
         <header className="chat__head">
           <span className="chat__avatar"><BotMessageSquare size={20} strokeWidth={1.7} /></span>
           <div className="chat__title">
@@ -178,8 +193,15 @@ export default function ChatWidget() {
         <p className="chat__note">AI assistant. For quotes and project details, <Link to="/contact" onClick={() => setOpen(false)}>contact the team</Link>.</p>
       </section>
 
-      <button className="chat__fab" onClick={() => setOpen((o) => !o)} aria-label={open ? 'Close chat' : 'Chat with the AFTR Assistant'} aria-expanded={open}>
-        {open ? <X size={22} /> : <BotMessageSquare size={24} strokeWidth={1.7} />}
+      <button
+        ref={fabRef}
+        className="chat__fab"
+        onClick={() => setOpen((o) => !o)}
+        aria-label={open ? 'Close AFTR Assistant' : 'Open AFTR Assistant'}
+        aria-expanded={open}
+        aria-controls="aftr-chat-panel"
+      >
+        {open ? <X size={20} /> : <BotMessageSquare size={20} strokeWidth={1.7} />}
         {!open && <span className="chat__fab-label">Ask AI</span>}
       </button>
     </div>

@@ -23,7 +23,7 @@ export default function Home() {
         <div className="hero__grid" aria-hidden="true" />
         <div className="container hero__inner">
           <div className="hero__logo reveal"><FullLogo /></div>
-          <p className="eyebrow reveal">AI · Cloud · Data · Development · Infrastructure</p>
+          <p className="eyebrow reveal">AI · Data · Cloud · Software</p>
           <h1 className="hero__title reveal">
             AI-powered technology,<br className="br-desktop" /> built for what comes next.
           </h1>
@@ -105,13 +105,13 @@ export default function Home() {
       <section className="statement">
         <div className="container">
           <p className="statement__text reveal">
-            One partner. <span>From the first line of code</span> to the servers it runs on{' '}
+            One partner. <span>From the first line of code</span> to the servers it runs on,{' '}
             <span>the data behind it, and the intelligence built into it.</span>
           </p>
           <div className="statement__pillars">
-            <div className="reveal"><strong>Intelligence</strong><span>AI chatbots, agents and models that automate work and surface what matters.</span></div>
+            <div className="reveal"><strong>Intelligence</strong><span>AI chatbots, agents and models that take routine work off your team.</span></div>
             <div className="reveal" style={{ '--d': '100ms' }}><strong>Data</strong><span>Pipelines, analysis and dashboards that give you one source of truth.</span></div>
-            <div className="reveal" style={{ '--d': '200ms' }}><strong>Software</strong><span>Websites, apps and ERP systems engineered for real users.</span></div>
+            <div className="reveal" style={{ '--d': '200ms' }}><strong>Software</strong><span>Websites, apps and ERP systems engineered for the people who use them.</span></div>
             <div className="reveal" style={{ '--d': '300ms' }}><strong>Infrastructure</strong><span>Cloud, on-prem and hybrid platforms that stay fast and secure.</span></div>
           </div>
         </div>
@@ -148,8 +148,8 @@ export default function Home() {
             {team.map((m, i) => (
               <div className="founder reveal" key={m.name} style={{ '--d': `${i * 90}ms` }}>
                 {photoFor(m.name)
-                  ? <img className="avatar avatar--photo" src={photoFor(m.name)} alt={m.name} loading="lazy" />
-                  : <span className="avatar">{initials(m.name)}</span>}
+                  ? <img className="avatar avatar--photo" src={photoFor(m.name)} alt={`${m.name}, ${m.role}`} loading="lazy" />
+                  : <span className="avatar" aria-hidden="true">{initials(m.name)}</span>}
                 <h3>{m.name}</h3>
                 <p className="founder__role">{m.role.replace('Co-founder · ', '')}</p>
                 <p className="founder__text">{m.short}</p>

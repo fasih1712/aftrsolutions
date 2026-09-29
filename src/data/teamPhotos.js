@@ -1,5 +1,5 @@
-// Founder photos: drop <name-slug>.jpg (or .png/.webp) into src/assets/team/, e.g.
-// abdul-rafay.jpg, and it is picked up automatically. Kept apart from about.js because
+// Founder photos: drop <name-slug>.webp (or .jpg/.png) into src/assets/team/, square and at least
+// 600x600, e.g. abdul-rafay.webp, and it is picked up automatically. Kept apart from about.js because
 // import.meta.glob is Vite-only and about.js is also read by scripts/build-knowledge.mjs.
 const photos = import.meta.glob('../assets/team/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
 

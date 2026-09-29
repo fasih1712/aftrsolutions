@@ -6,6 +6,7 @@ export const services = [
     slug: 'ai-automation-agents',
     icon: Bot,
     title: 'AI Automation & Agents',
+    subtitle: 'Chatbots, Agents & Workflows',
     short: 'Autonomous AI agents and automated workflows that take repetitive work off your team’s plate, around the clock.',
     tagline: 'Let AI handle the busywork.',
     intro:
@@ -35,6 +36,7 @@ export const services = [
     slug: 'ai-solutions',
     icon: BrainCircuit,
     title: 'AI Solutions',
+    subtitle: 'LLM Apps, Search & Forecasting',
     short: 'Custom AI built on your own data: intelligent search, document understanding, analytics and predictions.',
     tagline: 'Turn your data into decisions.',
     intro:
@@ -94,6 +96,7 @@ export const services = [
     slug: 'devops-cloud',
     icon: Cloud,
     title: 'DevOps & Cloud',
+    subtitle: 'CI/CD, Kubernetes & Migration',
     short: 'Cloud platforms, CI/CD pipelines and Kubernetes that make every release fast, safe and repeatable.',
     tagline: 'Ship faster. Sleep better.',
     intro:
@@ -153,6 +156,7 @@ export const services = [
     slug: 'managed-infrastructure',
     icon: ServerCog,
     title: 'Managed Infrastructure',
+    subtitle: 'Servers, Identity & Microsoft 365',
     short: 'Day-to-day care for your servers, networks, identity and Microsoft 365, so your team can simply get on with its work.',
     tagline: 'IT that simply works.',
     intro:

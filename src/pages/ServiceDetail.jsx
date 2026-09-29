@@ -14,7 +14,7 @@ export default function ServiceDetail() {
   usePageTitle(service?.title, service?.short)
   if (!service) return <NotFound />
 
-  const { icon: Icon, title, subtitle, tagline, intro, offerings, stack, outcomes, faqs } = service
+  const { icon: Icon, title, tagline, intro, offerings, stack, outcomes, faqs } = service
   const others = services.filter((s) => s.slug !== slug).slice(0, 4)
 
   return (
@@ -25,7 +25,7 @@ export default function ServiceDetail() {
         <div className="container svc-hero">
           <div>
             <Link to="/services" className="back-link reveal"><ArrowLeft size={16} /> All services</Link>
-            <p className="eyebrow reveal">{subtitle ? `${title} · ${subtitle}` : title}</p>
+            <p className="eyebrow reveal">{title}</p>
             <h1 className="page-header__title page-header__title--left reveal">{tagline}</h1>
             <p className="page-header__lead page-header__lead--left reveal">{intro}</p>
             <div className="hero__cta hero__cta--left reveal">
