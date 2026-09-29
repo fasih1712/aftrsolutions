@@ -6,6 +6,9 @@ export const site = {
   // TODO: add real phone + LinkedIn before going live
   phone: '', // e.g. '+92 300 1234567', hidden while empty
   location: 'Karachi, Pakistan',
+  // Web3Forms access key (free, from web3forms.com). It is meant to be public, so it lives here.
+  // While empty, the contact form falls back to opening the visitor's email app.
+  formKey: '',
   social: {
     linkedin: '', // hidden while empty
     github: 'https://github.com/fasih1712',

@@ -984,6 +984,14 @@ button { font: inherit; color: inherit; }
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .form-note { font-size: var(--fs-sm); color: var(--muted); text-align: center; }
+.form-note a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+.contact__done { justify-items: center; text-align: center; gap: 14px; padding: 56px 34px; }
+.contact__done svg { color: var(--text); }
+.contact__done h2 { font-size: var(--fs-xl); }
+.contact__done p { color: var(--text-2); max-width: 380px; }
+.contact__done a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+.contact__done .btn { margin-top: 8px; }
 
 /* Footer */
 .footer { border-top: 1px solid var(--border); padding: 72px 0 32px; background: var(--bg); }
