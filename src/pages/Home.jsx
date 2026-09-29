@@ -33,7 +33,7 @@ export default function Home() {
           </p>
           <div className="hero__cta reveal">
             <Link to="/contact" className="btn btn--primary">Start a project <ArrowRight size={18} /></Link>
-            <a href="#about" className="btn btn--ghost">Who we are</a>
+            <Link to="/about" className="btn btn--ghost">About us</Link>
           </div>
         </div>
         <a href="#about" className="hero__scroll" aria-label="Scroll down"><ArrowDown size={18} /></a>
@@ -60,7 +60,7 @@ export default function Home() {
                 and stays with you after launch.
               </p>
               <div className="who__actions">
-                <Link to="/about" className="btn btn--primary">About the company <ArrowRight size={18} /></Link>
+                <Link to="/about" className="btn btn--primary">About us <ArrowRight size={18} /></Link>
                 <Link to="/services" className="btn btn--ghost">Our services</Link>
               </div>
             </div>

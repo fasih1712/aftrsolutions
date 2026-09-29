@@ -6,7 +6,7 @@ export const products = [
   {
     icon: MessageCircle,
     tag: 'AI · WhatsApp',
-    title: 'AI WhatsApp Chatbot',
+    title: 'WhatsApp AI Chatbot',
     anim: 'chat',
     own: true,
     text: 'An AI assistant on your WhatsApp number that answers customers instantly, day and night. It learns your products, prices and FAQs so every reply is accurate.',
