@@ -21,6 +21,8 @@ jobs:
       - run: npm ci
       - run: npm run build   # fail fast before touching the server
       - run: npm run knowledge   # chat assistant knowledge must build too
+      - run: npx playwright install --with-deps chromium
+      - run: npm run a11y   # blocks the deploy on any critical/serious axe violation
 
   deploy:
     needs: build
