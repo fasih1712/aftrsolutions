@@ -8,7 +8,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Multi-page with react-router-dom (BrowserRouter). Routes in `src/App.jsx`:
   `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, 404.
 - All content lives in `src/data/` — edit there, not in components:
-  `site.js` (contact, nav, tech list, steps, home use cases), `services.js` (6 services + detail page content),
+  `site.js` (contact, nav, tech list, steps, home use cases), `services.js` (7 services + detail page content),
   `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts).
 - Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
 - Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
@@ -23,7 +23,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Copy: no em dashes (—) anywhere; write plain, natural sentences so it never reads as AI-generated.
 - Motion: animated counters (`components/Counter.jsx`) on Home facts; product icons on /products animate per `anim` in `products.js`. Animations stay ON under prefers-reduced-motion (Windows reports it whenever "Animation effects" is off, which hid all motion on the owner’s laptop); only smooth scroll and the hero glow drift are disabled there.
 
-- Services (AI first, in this order): AI Automation & Agents, AI Solutions, Data Engineering & Analytics, DevOps & Cloud, Development (Websites, Apps & ERP), Managed Infrastructure. AI is the lead message across the site.
+- Services (AI first, in this order): AI Automation & Agents, AI Solutions, Data Engineering & Analytics, DevOps & Cloud, Development (Websites, Apps & ERP), Digital Marketing (Meta Ads, Google Ads & PPC), Managed Infrastructure. AI is the lead message across the site.
 - Products (AI first): WhatsApp AI Chatbot, Website AI Chatbot, AI Forecasting & Analytics, Phelix ERP (own), Scrap Management (own).
 - Founders (all four co-founders): Muhammad Fasihullah (cloud/DevOps/AI), Abdul Rafay (data engineering/AI), Syed Ali Javaid (ERP/AI), Syed Taha Javaid (data engineering).
 - Any card that lists services must have the hover treatment (lift, deep shadow, gradient border, cursor spotlight).

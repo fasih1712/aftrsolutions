@@ -89,7 +89,7 @@ export default function Home() {
           <SectionHead
             split
             eyebrow="Services we provide"
-            title="AI first. Six services, one team."
+            title="AI first. Seven services, one team."
             lead="AI sits at the centre of what we do, backed by the data, cloud and software skills to make it work in the real world. Each service has its own page with full details."
           />
           <div className="scards">

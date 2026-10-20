@@ -68,7 +68,7 @@ export default function About() {
 
       <section className="section">
         <div className="container">
-          <SectionHead split eyebrow="What we do" title="Six services, one partner." lead="Every engagement draws on the whole team, so your AI, data, software and infrastructure are designed to work together." />
+          <SectionHead split eyebrow="What we do" title="Seven services, one partner." lead="Every engagement draws on the whole team, so your AI, data, software and infrastructure are designed to work together." />
           <div className="svc-list">
             {services.map((s, i) => {
               const Icon = s.icon

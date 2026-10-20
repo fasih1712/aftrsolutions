@@ -425,6 +425,8 @@ button { font: inherit; color: inherit; }
 .scards--wide { grid-template-columns: repeat(2, 1fr); }
 .scards--wide .scard:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .scards--four { grid-template-columns: repeat(4, 1fr); gap: 18px; }
+/* a lone card on the last row sits in the middle column */
+.scards:not(.scards--wide):not(.scards--four) > .scard:last-child:nth-child(3n+1) { grid-column: 2; }
 
 .scard {
   --mx: 50%; --my: 50%;
@@ -1117,6 +1119,8 @@ button { font: inherit; color: inherit; }
 }
 @media (max-width: 1024px) {
   .scards, .products, .posts, .offerings, .usecases { grid-template-columns: repeat(2, 1fr); }
+  .scards:not(.scards--wide):not(.scards--four) > .scard:last-child:nth-child(3n+1) { grid-column: auto; }
+  .scards:not(.scards--wide):not(.scards--four) > .scard:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .step:nth-child(3) { border-left: none; padding-left: 0; }
   .step:nth-child(n+3) { border-top: 1px solid var(--border); margin-top: 20px; }

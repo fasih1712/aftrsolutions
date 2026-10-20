@@ -1,4 +1,4 @@
-import { Bot, Cloud, Code2, ServerCog, BrainCircuit, Database } from 'lucide-react'
+import { Bot, Cloud, Code2, ServerCog, BrainCircuit, Database, Megaphone } from 'lucide-react'
 
 // Each service gets its own page at /services/:slug
 export const services = [
@@ -150,6 +150,36 @@ export const services = [
       { q: 'How long does a website take?', a: 'A business website usually takes 2 to 4 weeks. Web and mobile apps depend on scope, and we give a clear estimate after the discovery call.' },
       { q: 'Will we own the code?', a: 'Yes. You get full ownership of the code, designs and infrastructure accounts.' },
       { q: 'Do you provide support after launch?', a: 'Yes. Our maintenance plans cover updates, security patches, monitoring and small improvements.' },
+    ],
+  },
+  {
+    slug: 'digital-marketing',
+    icon: Megaphone,
+    title: 'Digital Marketing',
+    subtitle: 'Meta Ads, Google Ads & PPC',
+    short: 'Paid campaigns on Meta and Google that bring in real leads and sales, tracked properly so you can see exactly what your ad spend brings back.',
+    tagline: 'More of the right customers.',
+    intro:
+      'We plan, launch and manage paid advertising on Facebook, Instagram and Google. That covers Search, Display, YouTube and Shopping ads, plus retargeting for people who already know you. Every campaign starts with proper conversion tracking, so decisions are based on leads and sales, not just clicks and impressions.',
+    offerings: [
+      { title: 'Meta Ads', text: 'Facebook and Instagram campaigns for leads, sales and awareness, with audiences, creatives and budgets tuned every week.' },
+      { title: 'Google Ads & PPC', text: 'Search campaigns that show up when people are already looking for what you sell, built on careful keyword research.' },
+      { title: 'Display, YouTube & Shopping', text: 'Banner, video and product ads across the Google network to reach new buyers and stay visible.' },
+      { title: 'Retargeting', text: 'Bring back visitors who looked but did not buy, with ads that match what they viewed.' },
+      { title: 'Tracking & analytics', text: 'Meta Pixel, Conversions API, Google Tag Manager and GA4 set up correctly, so every lead and sale is counted.' },
+      { title: 'Landing pages & reporting', text: 'Fast landing pages built to convert, and clear monthly reports on spend, leads and cost per result.' },
+    ],
+    stack: ['Meta Ads Manager', 'Google Ads', 'Google Analytics 4', 'Google Tag Manager', 'Meta Pixel', 'Conversions API', 'Looker Studio', 'Search Console'],
+    outcomes: [
+      'More qualified leads and sales',
+      'Lower cost per lead over time',
+      'Clear numbers on what your ad spend returns',
+      'Campaigns that improve every month',
+    ],
+    faqs: [
+      { q: 'Should we advertise on Meta or Google?', a: 'It depends on how your customers buy. Google works well when people search for your service, while Meta is great for reaching people by interest and location. Many businesses do best with both, and we will suggest a split after looking at your goals.' },
+      { q: 'How much should we spend on ads?', a: 'You can start with a modest test budget. We use the first few weeks to learn what works, then put more money behind the campaigns that bring in leads at a good cost.' },
+      { q: 'Do we keep the ad accounts?', a: 'Yes. Campaigns run in ad accounts that belong to you, and you have full access to the data at all times.' },
     ],
   },
   {
