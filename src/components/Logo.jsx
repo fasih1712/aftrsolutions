@@ -1,7 +1,7 @@
-import fullLight from '../assets/logo-full-light.png'
-import fullDark from '../assets/logo-full-dark.png'
-import lockLight from '../assets/logo-lockup-light.png'
-import lockDark from '../assets/logo-lockup-dark.png'
+import fullLight from '../assets/logo-full-light.webp'
+import fullDark from '../assets/logo-full-dark.webp'
+import lockLight from '../assets/logo-lockup-light.webp'
+import lockDark from '../assets/logo-lockup-dark.webp'
 
 // Both theme versions are rendered; CSS shows the one matching the active theme.
 export function FullLogo({ className = '' }) {

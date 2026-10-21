@@ -62,5 +62,5 @@ see a polite "try again in a minute" message. On the free tier Google may use pr
 **Paid alternative: Claude** - add `ANTHROPIC_API_KEY` instead (used only when no Gemini key is set).
 
 The deploy writes the keys to `~/aftrsolutions/.env` on the server (mode 600, not in git). Check with
-`curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true,"provider":"gemini"}` means the chat button is live.
+`curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true}` means the chat button is live.
 Without a key the site works normally and the chat button stays hidden.

@@ -27,8 +27,9 @@ export default function ServiceDetail() {
         <div className="container svc-hero">
           <div>
             <Link to="/services" className="back-link reveal"><ArrowLeft size={16} /> All services</Link>
-            <p className="eyebrow reveal">{title}</p>
-            <h1 className="page-header__title page-header__title--left reveal">{tagline}</h1>
+            {/* the service name is the h1 (what people search for); the tagline is the big visual line */}
+            <h1 className="eyebrow reveal">{title}</h1>
+            <p className="page-header__title page-header__title--left reveal">{tagline}</p>
             <p className="page-header__lead page-header__lead--left reveal">{intro}</p>
             <div className="hero__cta hero__cta--left reveal">
               <Link to="/contact" className="btn btn--primary">Discuss your project <ArrowRight size={18} /></Link>

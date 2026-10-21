@@ -12,6 +12,7 @@ import About from './pages/About'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import Contact from './pages/Contact'
+import Privacy from './pages/Privacy'
 import NotFound from './pages/NotFound'
 import { useTheme } from './hooks/useTheme'
 import { useReveal } from './hooks/useReveal'
@@ -41,10 +42,12 @@ function Layout({ theme, toggle }) {
   )
 }
 
-export default function App() {
+// Router-agnostic app: wrapped in BrowserRouter in the browser (below) and in
+// StaticRouter at build time (entry-server.jsx) to prerender every page.
+export function AppShell() {
   const { theme, toggle } = useTheme()
   return (
-    <BrowserRouter>
+    <>
       <Intro theme={theme} />
       <Routes>
         <Route element={<Layout theme={theme} toggle={toggle} />}>
@@ -56,9 +59,18 @@ export default function App() {
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
     </BrowserRouter>
   )
 }

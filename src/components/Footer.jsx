@@ -38,7 +38,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container footer__bottom">
-        <span>© {year} AFTR Solutions. All rights reserved.</span>
+        <span>© {year} AFTR Solutions. All rights reserved. · <Link to="/privacy">Privacy policy</Link></span>
         <span>Engineered in Karachi.</span>
       </div>
     </footer>

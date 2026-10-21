@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import markLight from '../assets/intro/mark-light.png'
-import markDark from '../assets/intro/mark-dark.png'
-import wordLight from '../assets/intro/word-light.png'
-import wordDark from '../assets/intro/word-dark.png'
-import tagLight from '../assets/intro/tag-light.png'
-import tagDark from '../assets/intro/tag-dark.png'
+import markLight from '../assets/intro/mark-light.webp'
+import markDark from '../assets/intro/mark-dark.webp'
+import wordLight from '../assets/intro/word-light.webp'
+import wordDark from '../assets/intro/word-dark.webp'
+import tagLight from '../assets/intro/tag-light.webp'
+import tagDark from '../assets/intro/tag-dark.webp'
 
 const KEY = 'aftr-intro-seen'
 const DURATION = 3000 // ms before the curtain lifts
@@ -23,6 +23,15 @@ function shouldPlay() {
  * Plays once per browser session.
  */
 export default function Intro({ theme }) {
+  // Prerendered HTML ships only the plain curtain, so the page doesn't flash before the
+  // animation starts. public/theme-init.js hides it for visitors who already saw the intro.
+  if (typeof window === 'undefined') {
+    return <div className="intro intro--ssr" aria-hidden="true"><div className="intro__grid" /></div>
+  }
+  return <IntroAnimation theme={theme} />
+}
+
+function IntroAnimation({ theme }) {
   const [phase, setPhase] = useState(() => (shouldPlay() ? 'play' : 'done'))
 
   useEffect(() => {

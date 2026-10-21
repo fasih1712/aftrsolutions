@@ -6,14 +6,22 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - React 19 + Vite, plain CSS (no Tailwind), lucide-react icons.
 - Light + dark theme via `data-theme` on `<html>`; tokens in `src/index.css` (`:root` and `:root[data-theme='dark']`).
 - Multi-page with react-router-dom (BrowserRouter). Routes in `src/App.jsx`:
-  `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, 404.
+  `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, `/privacy`, 404.
 - All content lives in `src/data/` — edit there, not in components:
   `site.js` (contact, nav, tech list, steps, home use cases), `services.js` (7 services + detail page content),
   `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts).
 - Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
 - Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
 - Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`).
-- Vite `base: '/'` is required for nested routes; nginx `try_files ... /index.html` handles SPA fallback.
+- Vite `base: '/'` is required for nested routes.
+- SEO / prerendering: `npm run build` = client build + SSR build (`src/entry-server.jsx`) + `scripts/prerender.mjs`, which writes
+  a real HTML file per route (`dist/services/devops-cloud.html` etc.) with its own title, description, canonical, Open Graph and
+  JSON-LD from `src/seo.js`, plus `404.html` and `sitemap.xml` (generated, don't add one to `public/`). New page or route →
+  add it to `pages`/`allRoutes()` in `src/seo.js`. nginx serves `try_files $uri $uri.html $uri/ =404` (real 404s, no SPA fallback).
+- Components must render on the server too: no `window`/`document`/storage access during render (use effects).
+- Security headers + CSP live in `security-headers.conf` (included in every nginx location). No inline scripts: the theme
+  bootstrap is `public/theme-init.js`. Fonts are self-hosted via @fontsource (no Google Fonts).
+- Images: WebP in `src/assets/`; `public/og-image.png` (1200x630) is the link-preview image.
 - Favicons (A mark only) in `public/`.
 
 ## Design rules
@@ -30,7 +38,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 
 ## AI chat assistant
 - Widget: `src/components/ChatWidget.jsx` (bottom-right, mounted in the App layout). Hidden unless `GET /api/health` returns `{ ready: true }`.
-- Backend: `server/index.mjs`, streams plain text from `POST /api/chat`. Provider: Google Gemini free tier via `@google/genai` when `GEMINI_API_KEY` is set (models `GEMINI_MODELS`, falls back on 429/404/5xx); Claude (`claude-opus-5`, paid) only if just `ANTHROPIC_API_KEY` is set. Owner wants it free, so Gemini is the live provider. Rate limit 30 req / 10 min per IP.
+- Backend: `server/index.mjs`, streams plain text from `POST /api/chat`. Provider: Google Gemini free tier via `@google/genai` when `GEMINI_API_KEY` is set (models `GEMINI_MODELS`, falls back on 429/404/5xx); Claude (`claude-opus-5`, paid) only if just `ANTHROPIC_API_KEY` is set. Owner wants it free, so Gemini is the live provider. Rate limit 30 req / 10 min per IP (real IP via nginx realip from Caddy's X-Forwarded-For) and a site-wide daily cap (`CHAT_DAILY_LIMIT`, default 800).
 - Knowledge: `scripts/build-knowledge.mjs` turns `src/data/*` into `server/knowledge.md` (generated, gitignored), so the bot only knows what the site says. Founders = name + role only; no personal info, no prices. Data files must stay importable by plain Node (no `import.meta.glob` in `src/data/*` except `teamPhotos.js`).
 - Key: GitHub secret `GEMINI_API_KEY` (or `ANTHROPIC_API_KEY`) -> deploy writes `.env` on the server -> `aftr-chat` container. nginx proxies `/api/` to `aftr-chat:8787`.
 - Local: `cd server && npm i && GEMINI_API_KEY=... npm start`, then `npm run dev` (Vite proxies `/api`).
@@ -42,6 +50,6 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 
 ## Deployment
 - AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.
-- Container: multi-stage Dockerfile (node build -> nginx). Bound to 127.0.0.1:8081 and 172.17.0.1:8081 (docker0).
+- Container: multi-stage Dockerfile (node build -> nginx-unprivileged, listens on 8080). Bound to 127.0.0.1:8081 and 172.17.0.1:8081 (docker0).
 - Caddy runs inside the `thesiscraftmentors` container (Caddyfile baked in the ThesisCraftMentor repo) and reverse-proxies `aftrsolutions.com` + `www` to 172.17.0.1:8081. See DEPLOY.md.
 - Contact email: info@aftrsolutions.com

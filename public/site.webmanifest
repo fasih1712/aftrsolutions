@@ -1,0 +1,13 @@
+{
+  "name": "AFTR Solutions",
+  "short_name": "AFTR",
+  "description": "AI, cloud, software and digital marketing from Karachi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0b0e",
+  "icons": [
+    { "src": "/favicon-light-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/favicon-light-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

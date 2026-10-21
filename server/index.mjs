@@ -20,6 +20,8 @@ const GEMINI_MODELS = (process.env.GEMINI_MODELS || 'gemini-flash-latest,gemini-
 const MAX_TURNS = 20
 const MAX_CHARS = 2000
 const RATE_LIMIT = { windowMs: 10 * 60 * 1000, max: 30 } // requests per IP per window
+// Site-wide ceiling per day, so a bot rotating IPs can't burn the whole API quota (or a paid bill).
+const DAILY_LIMIT = Number(process.env.CHAT_DAILY_LIMIT || 800)
 
 const knowledge = readFileSync(new URL('./knowledge.md', import.meta.url), 'utf8')
 const provider = process.env.GEMINI_API_KEY ? 'gemini' : process.env.ANTHROPIC_API_KEY ? 'claude' : null
@@ -62,8 +64,19 @@ setInterval(() => {
   for (const [ip, times] of hits) if (times.every((t) => now - t >= RATE_LIMIT.windowMs)) hits.delete(ip)
 }, RATE_LIMIT.windowMs).unref()
 
+let day = new Date().toISOString().slice(0, 10)
+let dayCount = 0
+function overDailyLimit() {
+  const today = new Date().toISOString().slice(0, 10)
+  if (today !== day) { day = today; dayCount = 0 }
+  dayCount += 1
+  return dayCount > DAILY_LIMIT
+}
+
+const SECURITY_HEADERS = { 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store' }
+
 function sendJson(res, status, body) {
-  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' })
+  res.writeHead(status, { ...SECURITY_HEADERS, 'Content-Type': 'application/json' })
   res.end(JSON.stringify(body))
 }
 
@@ -152,6 +165,11 @@ async function handleChat(req, res) {
   if (!ready) return sendJson(res, 503, { error: 'Assistant is not configured.' })
   const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown')
   if (rateLimited(ip)) return sendJson(res, 429, { error: 'Too many messages. Please wait a few minutes.' })
+  if (req.headers['content-type']?.split(';')[0].trim() !== 'application/json') return sendJson(res, 415, { error: 'Invalid request.' })
+  if (overDailyLimit()) {
+    console.warn(`Daily chat limit (${DAILY_LIMIT}) reached`)
+    return sendJson(res, 429, { error: 'The assistant is very busy today. Please email info@aftrsolutions.com and the team will reply within one business day.' })
+  }
 
   let messages
   try {
@@ -162,8 +180,8 @@ async function handleChat(req, res) {
   if (!messages) return sendJson(res, 400, { error: 'Invalid request.' })
 
   res.writeHead(200, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'text/plain; charset=utf-8',
-    'Cache-Control': 'no-store',
     'X-Accel-Buffering': 'no',
   })
 
@@ -190,7 +208,7 @@ async function handleChat(req, res) {
 
 http.createServer(async (req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname
-  if (req.method === 'GET' && path === '/api/health') return sendJson(res, 200, { ready, provider })
+  if (req.method === 'GET' && path === '/api/health') return sendJson(res, 200, { ready })
   if (req.method === 'POST' && path === '/api/chat') return handleChat(req, res)
   sendJson(res, 404, { error: 'Not found' })
 }).listen(PORT, () => {

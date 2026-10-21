@@ -1173,3 +1173,10 @@ button { font: inherit; color: inherit; }
   .scard { min-height: 0; }
   .article__body p, .article__body li { font-size: var(--fs-md); }
 }
+
+/* ============ SEO / prerender helpers ============ */
+/* service pages: the tagline is a <p> styled like the old h1 (the h1 is the service name) */
+p.page-header__title { margin: 0; letter-spacing: -0.035em; }
+/* prerendered intro curtain; hidden when the intro was already seen this session */
+.intro-seen .intro--ssr { display: none; }
+.footer__bottom a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }

@@ -11,8 +11,10 @@ services:
     container_name: aftr-web
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8081:80"
-      - "172.17.0.1:8081:80"
+      - "127.0.0.1:8081:8080"
+      - "172.17.0.1:8081:8080"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - aftr-chat
 
@@ -27,6 +29,9 @@ services:
     image: aftr-chat:latest
     container_name: aftr-chat
     restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
