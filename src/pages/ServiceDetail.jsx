@@ -15,7 +15,9 @@ export default function ServiceDetail() {
   if (!service) return <NotFound />
 
   const { icon: Icon, title, tagline, intro, offerings, stack, outcomes, faqs } = service
-  const others = services.filter((s) => s.slug !== slug).slice(0, 4)
+  // the next four services after this one, wrapping round, so every service is shown somewhere
+  const at = services.findIndex((s) => s.slug === slug)
+  const others = [1, 2, 3, 4].map((k) => services[(at + k) % services.length])
 
   return (
     <>

@@ -4,6 +4,34 @@
 
 export const posts = [
   {
+    slug: 'digital-marketing-that-tracks-revenue',
+    title: 'Why Your Marketing Isn’t Bringing Leads, and How to Fix the Leaks',
+    excerpt: 'Most campaigns don’t fail because of the ads. They fail between the click and the customer. Here’s where the leaks usually are.',
+    category: 'Digital Marketing',
+    date: '2026-10-21',
+    readTime: '5 min read',
+    author: 'AFTR Team',
+    body: [
+      { p: 'Many businesses spend steadily on ads and social media, see traffic arrive, and still wonder why enquiries are flat. In our experience the problem is rarely the ad itself. It is everything that happens after someone clicks.' },
+      { h2: 'Leak 1: A slow or confusing landing page' },
+      { p: 'If a page takes more than three seconds to load on mobile, or doesn’t make the next step obvious, most visitors leave. Send paid traffic to a focused page with one clear offer and one clear action, not your homepage.' },
+      { h2: 'Leak 2: Broken or missing tracking' },
+      { p: 'Without GA4 events, a correctly installed Meta Pixel and conversion tracking in Google Ads, the platforms optimise for the wrong thing. Fixing tracking alone often lowers cost per lead, because the algorithms finally know what a good result looks like.' },
+      { h2: 'Leak 3: Slow follow-up' },
+      { p: 'A lead contacted within five minutes is far more likely to convert than one called the next day. Automated WhatsApp or email replies, plus instant alerts to your sales team, close this gap without extra headcount.' },
+      { h2: 'Leak 4: No one looking at the numbers' },
+      { ul: [
+        'Cost per lead by channel',
+        'Lead-to-customer rate',
+        'Revenue per campaign',
+        'Search rankings for your top keywords',
+      ] },
+      { p: 'Review these monthly and move budget toward what works. Marketing becomes predictable when decisions follow data.' },
+      { quote: 'Fix the journey first, then scale the spend.' },
+      { p: 'This is why we treat marketing as an engineering problem: the campaign, the page, the tracking and the follow-up are one system. If you want a second opinion on yours, we’re happy to take a look.' },
+    ],
+  },
+  {
     slug: 'whatsapp-ai-chatbot-for-business',
     title: 'What a WhatsApp AI Chatbot Can Do for Your Business',
     excerpt: 'Your customers already message you on WhatsApp. Here is how an AI chatbot answers them instantly, captures leads and still knows when to call a human.',

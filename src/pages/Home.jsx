@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, ArrowDown, ArrowUpRight } from 'lucide-react'
+import { ArrowRight, ArrowDown, ArrowUpRight, Search, Sparkles, MousePointerClick, BarChart3 } from 'lucide-react'
 import { FullLogo } from '../components/Logo'
 import ServiceCard from '../components/ServiceCard'
 import { SectionHead, CTA, TechMarquee, LinkedInIcon } from '../components/Common'
@@ -14,6 +14,13 @@ import Counter from '../components/Counter'
 
 const ownProducts = products.filter((p) => p.own)
 
+const growthPillars = [
+  { icon: Search, title: 'Get found', text: 'SEO and Google Business Profile that put you in front of buyers searching right now.' },
+  { icon: Sparkles, title: 'Get noticed', text: 'Social content and paid campaigns built around a brand people remember.' },
+  { icon: MousePointerClick, title: 'Get leads', text: 'Landing pages and offers designed, built and tested by our own developers.' },
+  { icon: BarChart3, title: 'Get results', text: 'Tracking, automation and reporting that show exactly what every channel returns.' },
+]
+
 export default function Home() {
   usePageTitle()
   return (
@@ -23,13 +30,13 @@ export default function Home() {
         <div className="hero__grid" aria-hidden="true" />
         <div className="container hero__inner">
           <div className="hero__logo reveal"><FullLogo /></div>
-          <p className="eyebrow reveal">AI · Data · Cloud · Software</p>
+          <p className="eyebrow reveal">AI · Software · Marketing</p>
           <h1 className="hero__title reveal">
             AI-powered technology,<br className="br-desktop" /> built for what comes next.
           </h1>
           <p className="hero__lead reveal">
-            AFTR Solutions is an AI-first technology company. We build AI chatbots, agents and data
-            solutions, and the cloud, software and infrastructure they run on. Secure, scalable and built to last.
+            We design, build and grow the technology modern businesses depend on: AI, cloud, software and
+            digital marketing, delivered by one accountable team.
           </p>
           <div className="hero__cta reveal">
             <Link to="/contact" className="btn btn--primary">Start a project <ArrowRight size={18} /></Link>
@@ -52,7 +59,7 @@ export default function Home() {
                 We help businesses put AI to real use: chatbots that answer customers on WhatsApp and the web,
                 agents that take over repetitive work, and analytics that turn data into decisions. Around
                 that we build the websites, apps and ERP systems, cloud and DevOps, and IT infrastructure
-                that everything runs on.
+                that everything runs on, and the digital marketing that brings customers to it.
               </p>
               <p>
                 You don’t need a separate agency for the website, another for the servers and a freelancer
@@ -99,6 +106,29 @@ export default function Home() {
             <span><strong>Not sure what you need?</strong> Tell us the problem and we’ll recommend the right mix of services.</span>
             <span className="help-strip__cta">Talk to us <ArrowUpRight size={16} /></span>
           </Link>
+        </div>
+      </section>
+
+      <section className="section section--alt">
+        <div className="container">
+          <SectionHead
+            split
+            eyebrow="Digital marketing"
+            title="Engineered for growth."
+            lead="Most agencies stop at the ad. We build the whole journey: the campaign, the landing page, the tracking and the follow-up, so more of your traffic turns into customers."
+          />
+          <div className="usecases usecases--four">
+            {growthPillars.map(({ icon: Icon, title, text }, i) => (
+              <div className="usecase growth-pillar reveal" key={title} style={{ '--d': `${i * 80}ms` }}>
+                <span className="growth-pillar__icon" aria-hidden="true"><Icon size={20} strokeWidth={1.6} /></span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+          <div className="founders__more reveal">
+            <Link to="/services/digital-marketing" className="btn btn--primary">Explore digital marketing <ArrowRight size={18} /></Link>
+          </div>
         </div>
       </section>
 

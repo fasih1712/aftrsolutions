@@ -777,6 +777,11 @@ button { font: inherit; color: inherit; }
   font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
 }
 .usecase h3 { font-size: var(--fs-lg); padding-right: 26px; }
+.usecases--four { grid-template-columns: repeat(4, 1fr); }
+.growth-pillar__icon {
+  display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 6px;
+  border-radius: 12px; background: var(--bg-alt); border: 1px solid var(--border); color: var(--text);
+}
 .usecase p { color: var(--text-2); font-size: var(--fs-base); }
 .usecase__arrow { position: absolute; top: 26px; right: 24px; color: var(--muted); transition: transform 0.4s var(--ease), color 0.3s; }
 .usecase:hover .usecase__arrow { transform: translate(2px, -2px); color: var(--text); }
@@ -1114,7 +1119,7 @@ button { font: inherit; color: inherit; }
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .scards--four { grid-template-columns: repeat(2, 1fr); }
-  .team, .founders, .products--four { grid-template-columns: repeat(2, 1fr); }
+  .team, .founders, .products--four, .usecases--four { grid-template-columns: repeat(2, 1fr); }
   .statement__pillars { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 1024px) {

@@ -10,7 +10,7 @@ export default function Blog() {
       <PageHeader
         eyebrow="Blog"
         title="Insights from the team."
-        lead="Practical notes on AI automation, cloud, DevOps and building software that lasts."
+        lead="Practical notes on AI automation, cloud, DevOps, digital marketing and building software that lasts."
       />
       <section className="section section--tight">
         <div className="container">
