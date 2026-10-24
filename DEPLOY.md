@@ -64,3 +64,60 @@ see a polite "try again in a minute" message. On the free tier Google may use pr
 The deploy writes the keys to `~/aftrsolutions/.env` on the server (mode 600, not in git). Check with
 `curl -s http://127.0.0.1:8081/api/health` on the server: `{"ready":true}` means the chat button is live.
 Without a key the site works normally and the chat button stays hidden.
+
+## Innovation Hub
+
+The `hub-api` container (folder `hub/`) runs the Innovation Hub: access requests, admin approval, sign-in
+sessions, and the check that protects the demo subdomains. Users live in SQLite at `/data/hub.db` on the
+`hub-data` Docker volume, so they survive redeploys (`docker compose down -v` would delete them).
+
+**Admins (one-time):** add two GitHub secrets, then deploy:
+
+| Secret | Value |
+|---|---|
+| `HUB_ADMIN_EMAILS` | comma-separated admin emails, e.g. `fasih@aftrsolutions.com,rafay@aftrsolutions.com` |
+| `HUB_ADMIN_PASSWORD` | a starting password, at least 10 characters, no single quote (`'`) |
+
+On start, hub-api creates any listed admin that doesn't exist yet. Existing accounts are never changed, so
+each admin should sign in at `/hub/login` and change the password on `/hub/account` straight away.
+Admins approve, reject, revoke and reset passwords at `/hub/admin`.
+
+Check on the server: `curl -s http://127.0.0.1:8081/api/hub/health` returns `{"ok":true}`.
+Backup: `docker run --rm -v aftrsolutions_hub-data:/data -v "$PWD":/out alpine cp /data/hub.db /out/hub-backup.db`.
+
+### Innovation Hub demos
+
+Each live demo is its own container on this server, serving **sample data only** (never real client data),
+on its own subdomain such as `demo-chatbot.aftrsolutions.com`. The Hub session cookie is set for
+`.aftrsolutions.com`, so the same sign-in works there, and Caddy asks hub-api before every request.
+
+1. **Container:** run the demo (separate repo or a `demos/` folder) bound to the docker bridge only, with a
+   memory limit, e.g. in its compose file:
+   ```yaml
+   services:
+     demo-chatbot:
+       image: demo-chatbot:latest
+       restart: unless-stopped
+       ports: ["172.17.0.1:9101:80"]
+       mem_limit: 128m
+   ```
+   The signed-in user's email arrives in the `X-Hub-User` request header if the demo needs it.
+2. **DNS:** add an `A` record `demo-chatbot` -> the server's Elastic IP.
+3. **Caddy:** add this block to the ThesisCraftMentor repo's `Caddyfile` and push (Caddy gets the certificate itself):
+   ```
+   demo-chatbot.aftrsolutions.com {
+       forward_auth 172.17.0.1:8081 {
+           uri /api/hub/auth/verify?redirect=1
+           copy_headers X-Hub-User
+       }
+       reverse_proxy 172.17.0.1:9101
+   }
+   ```
+   `/api/hub/auth/verify` returns 200 for a signed-in, approved user. Otherwise, with `?redirect=1`, it
+   answers with a redirect to `https://aftrsolutions.com/hub/login?next=<the demo URL>`, which Caddy passes
+   to the browser. (Caddy hands the auth response straight back to the visitor, so a `handle_errors`
+   redirect would never run.) `next` is only honoured for `aftrsolutions.com` and its subdomains.
+4. **Website:** in `src/data/hub.js` set that demo's `type: 'live'` and `url: 'https://demo-chatbot.aftrsolutions.com'`,
+   then push. The Hub, the demo page and the chat assistant's knowledge all update from that file.
+
+Revoking a user deletes their sessions, so they lose access to every demo at once.

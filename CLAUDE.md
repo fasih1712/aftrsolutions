@@ -6,10 +6,12 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - React 19 + Vite, plain CSS (no Tailwind), lucide-react icons.
 - Light + dark theme via `data-theme` on `<html>`; tokens in `src/index.css` (`:root` and `:root[data-theme='dark']`).
 - Multi-page with react-router-dom (BrowserRouter). Routes in `src/App.jsx`:
-  `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, `/privacy`, 404.
+  `/`, `/services`, `/services/:slug`, `/products`, `/about`, `/blog`, `/blog/:slug`, `/contact`, `/privacy`, `/hub`, 404,
+  plus the Innovation Hub pages `/hub/login`, `/hub/request-access`, `/hub/app`, `/hub/demos/:slug`, `/hub/account`, `/hub/admin`
+  (lazy-loaded; see "Innovation Hub" below).
 - All content lives in `src/data/` — edit there, not in components:
   `site.js` (contact, nav, tech list, steps, home use cases), `services.js` (7 services + detail page content),
-  `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts).
+  `products.js`, `about.js` (4 co-founders with LinkedIn + values), `blog.js` (posts), `hub.js` (Innovation Hub demos).
 - Pages in `src/pages/`, shared UI in `src/components/` (ServiceCard = hover-animated card, Intro = opening animation).
 - Logos in `src/assets/` come in `-light` (black mark, for light bg) and `-dark` (silver mark, for dark bg) pairs; `components/Logo.jsx` swaps them via CSS. `src/assets/intro/` holds the split mark/wordmark/tagline used by the intro.
 - Intro animation plays once per browser session (sessionStorage `aftr-intro-seen`).
@@ -43,10 +45,28 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - Key: GitHub secret `GEMINI_API_KEY` (or `ANTHROPIC_API_KEY`) -> deploy writes `.env` on the server -> `aftr-chat` container. nginx proxies `/api/` to `aftr-chat:8787`.
 - Local: `cd server && npm i && GEMINI_API_KEY=... npm start`, then `npm run dev` (Vite proxies `/api`).
 
+## Innovation Hub
+- Login-protected area where approved prospects try live product demos. Public landing `/hub` (prerendered, in sitemap);
+  everything under `/hub/*` is lazy-loaded, prerendered only as a loader (`privateRoutes()` in `src/seo.js`), noindex
+  (meta + nginx `X-Robots-Tag`, `no-store`) and kept out of the sitemap.
+- Backend: `hub/index.mjs` (+ `hub/db.mjs`), container `hub-api` on :8790, nginx proxies `/api/hub/`. SQLite via better-sqlite3 at
+  `/data/hub.db` on the `hub-data` volume; argon2id passwords; session = random token in cookie `aftr_hub` (HttpOnly, Secure,
+  SameSite=Lax, Domain=.aftrsolutions.com, 7 days; only the SHA-256 is stored). POSTs need an allowed `Origin` (CSRF). Rate limits:
+  login 10 / 15 min, signup 5 / hour per IP. Sign-up -> `pending`; an admin approves / rejects / revokes / resets at `/hub/admin`.
+- Admins: GitHub secrets `HUB_ADMIN_EMAILS` (comma-separated) + `HUB_ADMIN_PASSWORD` create them on first start only.
+- Frontend: `components/HubSessionProvider.jsx` + `hooks/useHubSession.js` (session), `hooks/hubApi.js` (fetch helper, safe `next`),
+  `components/RequireHub.jsx` (guard), `components/DemoCard.jsx`, `components/HubUserMenu.jsx` (navbar). Only browsers that signed
+  in before (localStorage `aftr-hub`) call `/api/hub/me` on load.
+- Demos: `src/data/hub.js`, one per product, `type` live | video | coming-soon. Every demo is coming-soon until its container is
+  deployed. Live demos run as their own containers on demo subdomains protected by Caddy `forward_auth` ->
+  `/api/hub/auth/verify?redirect=1` (see DEPLOY.md "Innovation Hub demos"). Sample data only, never client data.
+- Tests: `hub/test-flow.mjs` (API flow + security checks), `npm run a11y` covers the Hub pages with a mocked session.
+- Local: `cd hub && npm i && HUB_ADMIN_EMAILS=you@example.com HUB_ADMIN_PASSWORD=... npm start`, then `npm run dev` (Vite proxies `/api/hub`).
+
 ## Commands
 - `npm run dev` / `npm run build` / `npm run preview`
 - `npm run knowledge` — rebuild the chatbot knowledge file
-- `docker compose up -d --build` — serves on 127.0.0.1:8081 (aftr-web + aftr-chat)
+- `docker compose up -d --build` — serves on 127.0.0.1:8081 (aftr-web + aftr-chat + hub-api)
 
 ## Deployment
 - AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.

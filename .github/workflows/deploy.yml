@@ -33,8 +33,10 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HUB_ADMIN_EMAILS: ${{ secrets.HUB_ADMIN_EMAILS }}
+          HUB_ADMIN_PASSWORD: ${{ secrets.HUB_ADMIN_PASSWORD }}
         with:
-          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY
+          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY,HUB_ADMIN_EMAILS,HUB_ADMIN_PASSWORD
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
@@ -48,16 +50,29 @@ jobs:
             cd "$APP_DIR"
             git fetch --all
             git reset --hard origin/main
-            # Chat assistant keys: written from GitHub secrets, kept out of git (.gitignore).
-            # GEMINI_API_KEY = free tier (used first), ANTHROPIC_API_KEY = paid alternative.
-            if [ -n "$GEMINI_API_KEY$ANTHROPIC_API_KEY" ]; then
-              umask 077
-              : > .env
-              if [ -n "$GEMINI_API_KEY" ]; then printf 'GEMINI_API_KEY=%s\n' "$GEMINI_API_KEY" >> .env; fi
-              if [ -n "$ANTHROPIC_API_KEY" ]; then printf 'ANTHROPIC_API_KEY=%s\n' "$ANTHROPIC_API_KEY" >> .env; fi
-            fi
+            # Secrets -> .env (mode 600, kept out of git). Each non-empty secret replaces its own
+            # line; a secret that is empty or missing in GitHub leaves the existing line alone,
+            # so a deploy can never wipe a key. Values are single-quoted so docker compose reads
+            # them literally (a value must not contain a single quote).
+            #   GEMINI_API_KEY = chat, free tier (used first); ANTHROPIC_API_KEY = chat, paid alternative
+            #   HUB_ADMIN_EMAILS / HUB_ADMIN_PASSWORD = Innovation Hub admins, created on first start
+            umask 077
+            touch .env
+            chmod 600 .env
+            set_env() {
+              [ -n "$2" ] || return 0
+              case "$2" in *"'"*) echo "Skipping $1: value contains a single quote"; return 0 ;; esac
+              grep -v "^$1=" .env > .env.tmp || true
+              printf "%s='%s'\n" "$1" "$2" >> .env.tmp
+              mv .env.tmp .env
+            }
+            set_env GEMINI_API_KEY "$GEMINI_API_KEY"
+            set_env ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
+            set_env HUB_ADMIN_EMAILS "$HUB_ADMIN_EMAILS"
+            set_env HUB_ADMIN_PASSWORD "$HUB_ADMIN_PASSWORD"
             docker compose up -d --build
             docker image prune -f
             sleep 3
             curl -fsS -o /dev/null http://127.0.0.1:8081 && echo "AFTR site is up on 127.0.0.1:8081"
             echo "Chat assistant: $(curl -fsS http://127.0.0.1:8081/api/health || echo 'not reachable')"
+            echo "Innovation Hub API: $(curl -fsS http://127.0.0.1:8081/api/hub/health || echo 'not reachable')"
