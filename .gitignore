@@ -26,3 +26,6 @@ dist-ssr
 # Chat assistant
 .env
 server/knowledge.md
+
+# Innovation Hub local database
+hub/data

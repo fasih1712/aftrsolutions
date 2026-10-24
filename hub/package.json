@@ -1,0 +1,16 @@
+{
+  "name": "aftr-hub-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs",
+    "test:flow": "node test-flow.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
+    "better-sqlite3": "^13.0.3"
+  }
+}
