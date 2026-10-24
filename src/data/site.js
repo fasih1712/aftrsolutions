@@ -19,6 +19,7 @@ export const nav = [
   { label: 'Home', to: '/', end: true },
   { label: 'Services', to: '/services', hasMenu: true },
   { label: 'Products', to: '/products' },
+  { label: 'Innovation Hub', to: '/hub' },
   { label: 'About us', to: '/about' },
   { label: 'Blog', to: '/blog' },
   { label: 'Contact', to: '/contact' },

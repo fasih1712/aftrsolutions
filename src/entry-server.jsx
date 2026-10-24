@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router'
 import { AppShell } from './App.jsx'
 
-export { allRoutes, seoFor, headTags } from './seo.js'
+export { allRoutes, privateRoutes, seoFor, headTags } from './seo.js'
 
 export function render(url) {
   return renderToString(

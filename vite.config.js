@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   base: '/',
-  // `npm run dev`: forward chat requests to the assistant (cd server && npm start)
-  server: { proxy: { '/api': 'http://localhost:8787' } },
+  // `npm run dev`: forward Hub requests to hub-api (cd hub && npm start) and chat requests
+  // to the assistant (cd server && npm start). The more specific /api/hub must come first.
+  server: { proxy: { '/api/hub': 'http://localhost:8790', '/api': 'http://localhost:8787' } },
 })

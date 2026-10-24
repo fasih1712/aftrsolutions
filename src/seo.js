@@ -5,6 +5,7 @@ import { site } from './data/site.js'
 import { services, getService } from './data/services.js'
 import { posts, getPost } from './data/blog.js'
 import { team } from './data/about.js'
+import { demos, getDemo } from './data/hub.js'
 
 export const ORIGIN = 'https://aftrsolutions.com'
 export const OG_IMAGE = `${ORIGIN}/og-image.png`
@@ -91,9 +92,37 @@ const pages = {
   },
   '/privacy': {
     title: 'Privacy Policy | AFTR Solutions',
-    description: 'How AFTR Solutions handles information you share through this website, the contact form and the AI chat assistant.',
+    description: 'How AFTR Solutions handles information you share through this website, the contact form, the Innovation Hub and the AI chat assistant.',
     crumbs: [{ name: 'Privacy policy', path: '/privacy' }],
   },
+  '/hub': {
+    title: 'Innovation Hub: Try Our AI Products Live | AFTR Solutions',
+    description:
+      'Request access to the AFTR Innovation Hub and try live demos of our AI chatbots, automations and analytics on sample data. No sales call required.',
+    crumbs: [{ name: 'Innovation Hub', path: '/hub' }],
+  },
+}
+
+// Innovation Hub pages behind sign-in (or leading to it): prerendered as a loader so nginx can
+// serve them, marked noindex, and left out of the sitemap. nginx also sends X-Robots-Tag: noindex.
+const HUB = 'Innovation Hub | AFTR Solutions'
+const privatePages = {
+  '/hub/login': { title: `Sign in | ${HUB}`, description: 'Sign in to the AFTR Innovation Hub to explore live product demos.' },
+  '/hub/request-access': { title: `Request access | ${HUB}`, description: 'Request access to live demos of AFTR’s AI products.' },
+  '/hub/app': { title: `Your demos | ${HUB}`, description: 'Live demos of AFTR’s AI products.' },
+  '/hub/account': { title: `Your account | ${HUB}`, description: 'Manage your Innovation Hub account.' },
+  '/hub/admin': { title: `Admin | ${HUB}`, description: 'Innovation Hub administration.' },
+}
+
+function privatePage(path) {
+  const demo = path.match(/^\/hub\/demos\/([^/]+)$/)
+  const page = privatePages[path] || (demo && getDemo(demo[1]) && { title: `${getDemo(demo[1]).product} demo | ${HUB}`, description: getDemo(demo[1]).summary })
+  return page ? { ...page, robots: 'noindex, nofollow', canonical: null, schema: [] } : null
+}
+
+/** Hub routes that are prerendered (so nginx can serve them) but never indexed or listed in the sitemap. */
+export function privateRoutes() {
+  return [...Object.keys(privatePages), ...demos.map((d) => `/hub/demos/${d.slug}`)]
 }
 
 // Search-focused titles and descriptions per service (what people actually type into Google).
@@ -194,6 +223,7 @@ export function allRoutes() {
     { path: '/about', priority: '0.7', changefreq: 'monthly' },
     { path: '/blog', priority: '0.7', changefreq: 'weekly', lastmod: posts.map((p) => p.updated || p.date).sort().at(-1) },
     ...posts.map((p) => ({ path: `/blog/${p.slug}`, priority: '0.6', changefreq: 'yearly', lastmod: p.updated || p.date })),
+    { path: '/hub', priority: '0.7', changefreq: 'monthly' },
     { path: '/contact', priority: '0.8', changefreq: 'yearly' },
     { path: '/privacy', priority: '0.2', changefreq: 'yearly' },
   ]
@@ -202,6 +232,8 @@ export function allRoutes() {
 /** SEO data for a pathname. Returns `notFound: true` for anything that is not a real page. */
 export function seoFor(pathname) {
   const path = pathname.replace(/\/+$/, '') || '/'
+  const hidden = privatePage(path)
+  if (hidden) return hidden
   let page = pages[path]
   if (!page) {
     const svc = path.match(/^\/services\/([^/]+)$/)

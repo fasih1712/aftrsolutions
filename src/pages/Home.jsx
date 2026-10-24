@@ -163,6 +163,15 @@ export default function Home() {
           <div className="founders__more reveal">
             <Link to="/products" className="btn btn--ghost">View all products <ArrowRight size={18} /></Link>
           </div>
+          <div className="hub-teaser reveal">
+            <div className="cta__glow" aria-hidden="true" />
+            <div className="hub-teaser__text">
+              <p className="eyebrow">Innovation Hub</p>
+              <h2>Try our products before you talk to us.</h2>
+              <p>Request access to live demos of our AI products. Deployed, working and ready to explore.</p>
+            </div>
+            <Link to="/hub" className="btn btn--invert">Visit the Innovation Hub <ArrowRight size={18} /></Link>
+          </div>
         </div>
       </section>
 

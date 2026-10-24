@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Moon, Sun, Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
 import { LockupLogo } from './Logo'
+import HubUserMenu from './HubUserMenu'
+import { useHubSession } from '../hooks/useHubSession'
+import { firstName } from '../hooks/hubApi'
 import { nav } from '../data/site'
 import { services } from '../data/services'
 
@@ -11,6 +14,13 @@ export default function Navbar({ theme, onToggleTheme }) {
   // Hover keeps the mega menu open, so after a click we hide it until the pointer leaves.
   const [megaClosed, setMegaClosed] = useState(false)
   const { pathname } = useLocation()
+  const hub = useHubSession()
+  const navigate = useNavigate()
+
+  const hubSignOut = () => {
+    if (pathname.startsWith('/hub/')) navigate('/hub', { replace: true })
+    hub.signOut()
+  }
 
   useEffect(() => {
     setMegaClosed(true)
@@ -79,6 +89,7 @@ export default function Navbar({ theme, onToggleTheme }) {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          <HubUserMenu />
           <Link to="/contact" className="btn btn--primary btn--sm nav__cta">Let’s talk</Link>
           <button
             className="icon-btn nav__burger"
@@ -102,6 +113,15 @@ export default function Navbar({ theme, onToggleTheme }) {
         {nav.filter((l) => !l.hasMenu && l.to !== '/').map((l) => (
           <NavLink key={l.to} to={l.to}>{l.label}</NavLink>
         ))}
+        {hub.status === 'in' && (
+          <div className="nav__mobile-sub nav__mobile-hub">
+            <p>Signed in as {firstName(hub.user.name)}</p>
+            <Link to="/hub/app">Your demos</Link>
+            <Link to="/hub/account">Account</Link>
+            {hub.user.role === 'admin' && <Link to="/hub/admin">Admin</Link>}
+            <button type="button" onClick={() => { setOpen(false); hubSignOut() }}>Sign out</button>
+          </div>
+        )}
         <Link to="/contact" className="btn btn--primary">Let’s talk</Link>
       </div>
     </header>

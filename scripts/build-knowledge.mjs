@@ -8,6 +8,7 @@ import { services } from '../src/data/services.js'
 import { products } from '../src/data/products.js'
 import { team, values } from '../src/data/about.js'
 import { posts } from '../src/data/blog.js'
+import { demos } from '../src/data/hub.js'
 
 const url = (path) => `https://aftrsolutions.com${path}`
 const out = []
@@ -20,7 +21,7 @@ line(`${site.name} is an AI-first technology company based in ${site.location}, 
 line('It builds AI chatbots, AI agents and data solutions, plus the websites, apps, ERP systems, cloud and DevOps platforms and IT infrastructure they run on.')
 line('Clients get one accountable team for the whole picture instead of separate agencies, and the team stays involved after launch.')
 line(`Contact: email ${site.email}, or the contact form at ${url('/contact')}. The team replies within one business day.`)
-line(`Website pages: Home ${url('/')}, Services ${url('/services')}, Products ${url('/products')}, About ${url('/about')}, Blog ${url('/blog')}, Contact ${url('/contact')}.`)
+line(`Website pages: Home ${url('/')}, Services ${url('/services')}, Products ${url('/products')}, Innovation Hub ${url('/hub')}, About ${url('/about')}, Blog ${url('/blog')}, Contact ${url('/contact')}.`)
 line()
 line('## Values')
 for (const v of values) line(`- ${v.title}: ${v.text}`)
@@ -50,8 +51,19 @@ for (const p of products) {
   line(`Page: ${url('/products')}`)
   line(p.text)
   line(`Features: ${p.features.join('; ')}.`)
-  line('Demos are available on request through the contact page.')
+  const demo = demos.find((d) => d.product === p.title)
+  line(demo?.type === 'live' || demo?.type === 'video'
+    ? `A ${demo.type === 'live' ? 'live' : 'video'} demo is available in the Innovation Hub (${url('/hub')}) for approved users.`
+    : 'Its Innovation Hub demo is coming soon; until then the team can show it on a call booked through the contact page.')
 }
+line()
+line('## Innovation Hub (product demos)')
+line(`The Innovation Hub (${url('/hub')}) is where potential clients can try AFTR products themselves before talking to sales.`)
+line(`How it works: 1. Request access at ${url('/hub/request-access')} with your name, work email, company and what you would like to try. 2. The AFTR team reviews each request, usually within one business day. 3. Once approved, sign in at ${url('/hub/login')} and open the demos as often as you like.`)
+line('Every demo runs on sample data, never real client data. Access is by approval only, so the assistant cannot approve requests or check their status; for that, visitors should email the team.')
+line(`Forgotten passwords are reset by the team: contact ${site.email}.`)
+line('Demos:')
+for (const d of demos) line(`- ${d.product}: ${d.summary} Status: ${d.type === 'live' ? 'live' : d.type === 'video' ? 'video walkthrough' : 'coming soon'}.`)
 line()
 line('## How we work')
 for (const s of steps) line(`${s.n}. ${s.title}: ${s.text}`)
