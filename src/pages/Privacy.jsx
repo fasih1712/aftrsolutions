@@ -40,7 +40,8 @@ export default function Privacy() {
             model provider (currently Google Gemini) to generate chat replies. Chat messages are sent to that provider
             to produce an answer and are handled under its own terms, which may include using them to improve its
             services. If the contact form is enabled, submissions are delivered to our inbox through a form-delivery
-            service.
+            service. When you request Innovation Hub access, the details you enter are emailed to our team through our
+            email provider so we can review the request quickly.
           </p>
 
           <h2>Storage on your device</h2>

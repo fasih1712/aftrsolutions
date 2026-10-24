@@ -35,8 +35,13 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           HUB_ADMIN_EMAILS: ${{ secrets.HUB_ADMIN_EMAILS }}
           HUB_ADMIN_PASSWORD: ${{ secrets.HUB_ADMIN_PASSWORD }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          HUB_NOTIFY_EMAIL: ${{ secrets.HUB_NOTIFY_EMAIL }}
         with:
-          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY,HUB_ADMIN_EMAILS,HUB_ADMIN_PASSWORD
+          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY,HUB_ADMIN_EMAILS,HUB_ADMIN_PASSWORD,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,HUB_NOTIFY_EMAIL
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
@@ -56,6 +61,7 @@ jobs:
             # them literally (a value must not contain a single quote).
             #   GEMINI_API_KEY = chat, free tier (used first); ANTHROPIC_API_KEY = chat, paid alternative
             #   HUB_ADMIN_EMAILS / HUB_ADMIN_PASSWORD = Innovation Hub admins, created on first start
+            #   SMTP_* / HUB_NOTIFY_EMAIL = email to the team on every new Hub access request
             umask 077
             touch .env
             chmod 600 .env
@@ -70,6 +76,11 @@ jobs:
             set_env ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
             set_env HUB_ADMIN_EMAILS "$HUB_ADMIN_EMAILS"
             set_env HUB_ADMIN_PASSWORD "$HUB_ADMIN_PASSWORD"
+            set_env SMTP_HOST "$SMTP_HOST"
+            set_env SMTP_PORT "$SMTP_PORT"
+            set_env SMTP_USER "$SMTP_USER"
+            set_env SMTP_PASS "$SMTP_PASS"
+            set_env HUB_NOTIFY_EMAIL "$HUB_NOTIFY_EMAIL"
             docker compose up -d --build
             docker image prune -f
             sleep 3

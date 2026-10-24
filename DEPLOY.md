@@ -82,6 +82,22 @@ On start, hub-api creates any listed admin that doesn't exist yet. Existing acco
 each admin should sign in at `/hub/login` and change the password on `/hub/account` straight away.
 Admins approve, reject, revoke and reset passwords at `/hub/admin`.
 
+**Email on new requests (optional, free):** hub-api emails the team whenever someone requests access, with
+their details and a link to `/hub/admin`. It sends over SMTP, so add these GitHub secrets and redeploy:
+
+| Secret | Gmail (free) | Other mailbox |
+|---|---|---|
+| `SMTP_HOST` | `smtp.gmail.com` | your provider's SMTP server |
+| `SMTP_PORT` | `465` | `465` (SSL) or `587` (STARTTLS) |
+| `SMTP_USER` | the Gmail address | the mailbox login |
+| `SMTP_PASS` | a 16-character App Password | the mailbox password |
+| `HUB_NOTIFY_EMAIL` | where to send (default `info@aftrsolutions.com`) | same |
+
+Gmail App Password: turn on 2-Step Verification for the Google account, then create one at
+https://myaccount.google.com/apppasswords (it only works with 2-Step Verification on). Use a separate Gmail account for
+sending if you like; replies go straight to the person who asked (Reply-To). At most 50 notification emails a day
+(`HUB_NOTIFY_DAILY_LIMIT`). `docker logs hub-api` shows `email notifications on` or the reason they aren't working.
+
 Check on the server: `curl -s http://127.0.0.1:8081/api/hub/health` returns `{"ok":true}`.
 Backup: `docker run --rm -v aftrsolutions_hub-data:/data -v "$PWD":/out alpine cp /data/hub.db /out/hub-backup.db`.
 

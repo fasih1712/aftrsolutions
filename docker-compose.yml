@@ -55,6 +55,12 @@ services:
       HUB_ADMIN_EMAILS: ${HUB_ADMIN_EMAILS:-}
       HUB_ADMIN_PASSWORD: ${HUB_ADMIN_PASSWORD:-}
       HUB_COOKIE_DOMAIN: .aftrsolutions.com
+      # Email to the team on every new access request (off while SMTP_* are empty).
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      HUB_NOTIFY_EMAIL: ${HUB_NOTIFY_EMAIL:-info@aftrsolutions.com}
     volumes:
       - hub-data:/data
     mem_limit: 128m

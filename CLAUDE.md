@@ -54,6 +54,8 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
   SameSite=Lax, Domain=.aftrsolutions.com, 7 days; only the SHA-256 is stored). POSTs need an allowed `Origin` (CSRF). Rate limits:
   login 10 / 15 min, signup 5 / hour per IP. Sign-up -> `pending`; an admin approves / rejects / revokes / resets at `/hub/admin`.
 - Admins: GitHub secrets `HUB_ADMIN_EMAILS` (comma-separated) + `HUB_ADMIN_PASSWORD` create them on first start only.
+- New-request email: `hub/notify.mjs` (nodemailer over SMTP), on when secrets `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` are set;
+  goes to `HUB_NOTIFY_EMAIL` (default info@aftrsolutions.com), max 50/day, never blocks a sign-up.
 - Frontend: `components/HubSessionProvider.jsx` + `hooks/useHubSession.js` (session), `hooks/hubApi.js` (fetch helper, safe `next`),
   `components/RequireHub.jsx` (guard), `components/DemoCard.jsx`, `components/HubUserMenu.jsx` (navbar). Only browsers that signed
   in before (localStorage `aftr-hub`) call `/api/hub/me` on load.

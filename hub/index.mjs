@@ -10,6 +10,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { hash, verify } from '@node-rs/argon2'
 import { openDb } from './db.mjs'
+import { checkNotify, notifyNewRequest } from './notify.mjs'
 import { demos } from '../src/data/hub.js'
 
 const PORT = Number(process.env.PORT || 8790)
@@ -205,8 +206,10 @@ async function signup(req, res) {
     q.insertUser.run({ ...user, password_hash: await hash(pass, ARGON), role: 'user', status: 'pending', created_at: now(), approved_at: null })
   } catch (error) {
     if (error?.code !== 'SQLITE_CONSTRAINT_UNIQUE') throw error // two sign-ups racing for one email
+    return send(res, 201, SIGNUP_OK)
   }
   console.log('hub: new access request')
+  notifyNewRequest(user, `${SITE}/hub/admin`)
   send(res, 201, SIGNUP_OK)
 }
 
@@ -364,6 +367,7 @@ async function bootstrapAdmins() {
 }
 
 await bootstrapAdmins()
+checkNotify()
 setInterval(() => q.deleteExpired.run(now()), 60 * 60 * 1000).unref()
 
 const server = http.createServer(async (req, res) => {

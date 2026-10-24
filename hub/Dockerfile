@@ -15,7 +15,7 @@ WORKDIR /app
 RUN echo '{ "type": "module" }' > package.json \
  && mkdir -p /data && chown node:node /data
 COPY --from=deps /app/hub/node_modules ./hub/node_modules
-COPY hub/package.json hub/index.mjs hub/db.mjs ./hub/
+COPY hub/package.json hub/index.mjs hub/db.mjs hub/notify.mjs ./hub/
 COPY src/data/hub.js ./src/data/hub.js
 ENV NODE_ENV=production PORT=8790
 USER node
