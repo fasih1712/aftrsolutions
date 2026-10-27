@@ -182,10 +182,22 @@ await step('admin reset-password returns a working temporary password', async ()
   assert.equal(ok.status, 200)
   const cp = await call('/change-password', { method: 'POST', body: { currentPassword: r.data.password, newPassword: visitor.password }, cookie: sessionCookie(ok).pair })
   assert.equal(cp.status, 200)
-  await call(`/admin/users/${userId}/revoke`, { method: 'POST', body: {}, cookie: admin })
+})
+
+await step('a signed-in user can change their own name', async () => {
+  const ip = `10.251.${Math.floor(Math.random() * 250)}.7` // earlier steps used up this IP's sign-in budget
+  const ok = await call('/login', { method: 'POST', body: { email: visitor.email, password: visitor.password }, ip })
+  const cookie = sessionCookie(ok).pair
+  const r = await call('/profile', { method: 'POST', body: { name: '  Flow   Tester ' }, cookie })
+  assert.equal(r.status, 200)
+  assert.equal(r.data.user.name, 'Flow Tester')
+  assert.equal((await call('/me', { cookie })).data.name, 'Flow Tester')
+  assert.equal((await call('/profile', { method: 'POST', body: { name: ' ' }, cookie })).status, 400)
+  assert.equal((await call('/profile', { method: 'POST', body: { name: 'X' } })).status, 401)
 })
 
 await step('admin stats', async () => {
+  await call(`/admin/users/${userId}/revoke`, { method: 'POST', body: {}, cookie: admin })
   const s = await call('/admin/stats', { cookie: admin })
   assert.equal(s.status, 200)
   assert.ok(s.data.users.revoked >= 1)

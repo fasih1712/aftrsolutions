@@ -58,6 +58,7 @@ export function openDb(file) {
     insertUser: db.prepare(`INSERT INTO users (name, email, company, phone, reason, password_hash, role, status, created_at, approved_at)
       VALUES (@name, @email, @company, @phone, @reason, @password_hash, @role, @status, @created_at, @approved_at)`),
     setStatus: db.prepare('UPDATE users SET status = @status, approved_at = @approved_at, approved_by = @approved_by WHERE id = @id'),
+    setName: db.prepare('UPDATE users SET name = ? WHERE id = ?'),
     setPassword: db.prepare('UPDATE users SET password_hash = ? WHERE id = ?'),
     touchLogin: db.prepare('UPDATE users SET last_login_at = ? WHERE id = ?'),
     listUsers: db.prepare(`SELECT ${USER_COLUMNS}, a.name AS approved_by_name,

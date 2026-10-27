@@ -1214,6 +1214,7 @@ p.page-header__title { margin: 0; letter-spacing: -0.035em; }
 .form-alert:empty { padding: 0; border: 0; }
 .field input[aria-invalid='true'] { border-color: var(--text); }
 .hub-narrow { max-width: 620px; }
+.hub-stack { display: grid; gap: 1.5rem; }
 .hub-form__title { font-size: var(--fs-xl); }
 
 /* demo detail */

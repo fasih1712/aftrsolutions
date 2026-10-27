@@ -3,7 +3,7 @@
 // proxies /api/hub/* here (see nginx.conf); plain node:http like server/index.mjs.
 //
 //   public  POST /signup, POST /login, GET /health, GET /auth/verify (Caddy forward_auth)
-//   user    POST /logout, GET /me, POST /change-password, GET /demos, POST /demos/:slug/open
+//   user    POST /logout, GET /me, POST /profile, POST /change-password, GET /demos, POST /demos/:slug/open
 //   admin   GET /admin/users?status=, POST /admin/users/:id/(approve|reject|revoke|reset-password), GET /admin/stats
 import http from 'node:http'
 import { createHash, randomBytes } from 'node:crypto'
@@ -245,6 +245,12 @@ async function changePassword(req, res, user) {
   send(res, 200, { ok: true })
 }
 
+async function updateProfile(req, res, user) {
+  const name = text(await readJson(req), 'name', { label: 'Name', max: 100 })
+  q.setName.run(name, user.id)
+  send(res, 200, { user: publicUser({ ...user, name }) })
+}
+
 const publicDemo = ({ slug, product, summary, type, url, videoUrl, tryThis }) =>
   ({ slug, product, summary, type, url: type === 'live' ? url : undefined, videoUrl: type === 'video' ? videoUrl : undefined, tryThis })
 
@@ -333,6 +339,7 @@ async function route(req, res) {
   if (method === 'POST' && path === '/logout') return logout(req, res)
 
   if (method === 'GET' && path === '/me') return send(res, 200, publicUser(requireUser(req)))
+  if (method === 'POST' && path === '/profile') return updateProfile(req, res, requireUser(req))
   if (method === 'POST' && path === '/change-password') return changePassword(req, res, requireUser(req))
   if (method === 'GET' && path === '/demos') { requireUser(req); return send(res, 200, { demos: demos.map(publicDemo) }) }
   let m = path.match(/^\/demos\/([a-z0-9-]{1,60})\/open$/)

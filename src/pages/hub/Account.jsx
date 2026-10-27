@@ -12,12 +12,15 @@ const EMPTY = { currentPassword: '', newPassword: '', confirm: '' }
 const MIN_PASSWORD = 10
 
 function AccountPage() {
-  const { user, signOut, expire } = useHubSession()
+  const { user, signIn, signOut, expire } = useHubSession()
   const navigate = useNavigate()
   useReveal(useLocation().pathname)
   const [form, setForm] = useState(EMPTY)
   const [message, setMessage] = useState({ type: '', text: '' })
   const [busy, setBusy] = useState(false)
+  const [name, setName] = useState(user.name)
+  const [nameMessage, setNameMessage] = useState({ type: '', text: '' })
+  const [nameBusy, setNameBusy] = useState(false)
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
@@ -35,6 +38,20 @@ function AccountPage() {
     setMessage({ type: 'ok', text: 'Your password has been changed. Any other devices have been signed out.' })
   }
 
+  const saveName = async (e) => {
+    e.preventDefault()
+    if (!name.trim()) return setNameMessage({ type: 'error', text: 'Please enter your name.' })
+    setNameBusy(true)
+    setNameMessage({ type: '', text: '' })
+    const r = await hubFetch('/profile', { method: 'POST', body: { name } })
+    setNameBusy(false)
+    if (r.status === 401) return expire()
+    if (!r.ok) return setNameMessage({ type: 'error', text: r.data.error })
+    signIn(r.data.user)
+    setName(r.data.user.name)
+    setNameMessage({ type: 'ok', text: 'Your name has been saved.' })
+  }
+
   const leave = () => {
     navigate('/hub', { replace: true })
     signOut()
@@ -48,7 +65,17 @@ function AccountPage() {
         </div>
       </PageHeader>
       <section className="section section--tight">
-        <div className="container hub-narrow">
+        <div className="container hub-narrow hub-stack">
+          <form className="card contact__form reveal" onSubmit={saveName}>
+            <h2 className="hub-form__title">Your name</h2>
+            <label className="field">
+              <span>Full name</span>
+              <input required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" aria-describedby="name-message" />
+            </label>
+            <div id="name-message" className="form-alert" role="alert">{nameMessage.type === 'error' ? nameMessage.text : ''}</div>
+            <div className="form-alert form-alert--ok" role="status">{nameMessage.type === 'ok' ? nameMessage.text : ''}</div>
+            <button type="submit" className="btn btn--primary btn--block" disabled={nameBusy || name.trim() === user.name}>{nameBusy ? 'Saving…' : 'Save name'}</button>
+          </form>
           <form className="card contact__form reveal" onSubmit={submit}>
             <h2 className="hub-form__title">Change password</h2>
             <label className="field">
