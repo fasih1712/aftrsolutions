@@ -71,16 +71,20 @@ The `hub-api` container (folder `hub/`) runs the Innovation Hub: access requests
 sessions, and the check that protects the demo subdomains. Users live in SQLite at `/data/hub.db` on the
 `hub-data` Docker volume, so they survive redeploys (`docker compose down -v` would delete them).
 
-**Admins (one-time):** add two GitHub secrets, then deploy:
+**Admins (one-time):** add these GitHub secrets, then deploy:
 
 | Secret | Value |
 |---|---|
 | `HUB_ADMIN_EMAILS` | comma-separated admin emails, e.g. `fasih@aftrsolutions.com,rafay@aftrsolutions.com` |
 | `HUB_ADMIN_PASSWORD` | a starting password, at least 10 characters, no single quote (`'`) |
+| `HUB_ADMIN_NAMES` | their names in the same order, e.g. `Muhammad Fasihullah,Abdul Rafay` |
 
-On start, hub-api creates any listed admin that doesn't exist yet. Existing accounts are never changed, so
+On start, hub-api creates any listed admin that doesn't exist yet. Existing passwords are never changed, so
 each admin should sign in at `/hub/login` and change the password on `/hub/account` straight away.
-Admins approve, reject, revoke and reset passwords at `/hub/admin`.
+Without `HUB_ADMIN_NAMES`, an admin whose email clearly matches a co-founder gets that co-founder's name.
+A listed admin still named after their email prefix (older versions did that) is renamed on start; a name
+changed on `/hub/account` or in the admin panel is kept. Admins approve, reject, revoke, rename and reset
+passwords at `/hub/admin`.
 
 **Email on new requests (optional, free):** hub-api emails the team whenever someone requests access, with
 their details and a link to `/hub/admin`. It sends over SMTP, so add these GitHub secrets and redeploy:

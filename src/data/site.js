@@ -19,8 +19,9 @@ export const nav = [
   { label: 'Home', to: '/', end: true },
   { label: 'Services', to: '/services', hasMenu: true },
   { label: 'Products', to: '/products' },
-  { label: 'Innovation Hub', to: '/hub' },
-  { label: 'About us', to: '/about' },
+  // `short` is the desktop navbar label; the full label stays in the mobile menu and aria-label.
+  { label: 'Innovation Hub', short: 'Hub', to: '/hub' },
+  { label: 'About us', short: 'About', to: '/about' },
   { label: 'Blog', to: '/blog' },
   { label: 'Contact', to: '/contact' },
 ]

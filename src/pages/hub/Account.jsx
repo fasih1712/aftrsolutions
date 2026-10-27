@@ -10,6 +10,8 @@ import { useReveal } from '../../hooks/useReveal'
 
 const EMPTY = { currentPassword: '', newPassword: '', confirm: '' }
 const MIN_PASSWORD = 10
+const MIN_NAME = 2
+const MAX_NAME = 80
 
 function AccountPage() {
   const { user, signIn, signOut, expire } = useHubSession()
@@ -40,10 +42,10 @@ function AccountPage() {
 
   const saveName = async (e) => {
     e.preventDefault()
-    if (!name.trim()) return setNameMessage({ type: 'error', text: 'Please enter your name.' })
+    if (name.trim().length < MIN_NAME) return setNameMessage({ type: 'error', text: `Please enter your full name (at least ${MIN_NAME} characters).` })
     setNameBusy(true)
     setNameMessage({ type: '', text: '' })
-    const r = await hubFetch('/profile', { method: 'POST', body: { name } })
+    const r = await hubFetch('/account/profile', { method: 'POST', body: { name } })
     setNameBusy(false)
     if (r.status === 401) return expire()
     if (!r.ok) return setNameMessage({ type: 'error', text: r.data.error })
@@ -70,7 +72,7 @@ function AccountPage() {
             <h2 className="hub-form__title">Your name</h2>
             <label className="field">
               <span>Full name</span>
-              <input required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" aria-describedby="name-message" />
+              <input required minLength={MIN_NAME} maxLength={MAX_NAME} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" aria-describedby="name-message" />
             </label>
             <div id="name-message" className="form-alert" role="alert">{nameMessage.type === 'error' ? nameMessage.text : ''}</div>
             <div className="form-alert form-alert--ok" role="status">{nameMessage.type === 'ok' ? nameMessage.text : ''}</div>

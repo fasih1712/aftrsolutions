@@ -39,7 +39,8 @@ services:
   # Innovation Hub API: sign-up, admin approval, sessions and the forward_auth check that
   # protects the demo subdomains. Only reachable by nginx (aftr-web) on the compose network.
   # Users live in SQLite on the hub-data volume, so they survive redeploys.
-  # HUB_ADMIN_EMAILS (comma-separated) + HUB_ADMIN_PASSWORD create the admins on first start.
+  # HUB_ADMIN_EMAILS (comma-separated) + HUB_ADMIN_PASSWORD create the admins on first start;
+  # HUB_ADMIN_NAMES (same order) gives their display names.
   hub-api:
     build:
       context: .
@@ -54,6 +55,7 @@ services:
       NODE_ENV: production
       HUB_ADMIN_EMAILS: ${HUB_ADMIN_EMAILS:-}
       HUB_ADMIN_PASSWORD: ${HUB_ADMIN_PASSWORD:-}
+      HUB_ADMIN_NAMES: ${HUB_ADMIN_NAMES:-}
       HUB_COOKIE_DOMAIN: .aftrsolutions.com
       # Email to the team on every new access request (off while SMTP_* are empty).
       SMTP_HOST: ${SMTP_HOST:-}

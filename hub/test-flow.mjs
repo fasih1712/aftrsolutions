@@ -188,12 +188,24 @@ await step('a signed-in user can change their own name', async () => {
   const ip = `10.251.${Math.floor(Math.random() * 250)}.7` // earlier steps used up this IP's sign-in budget
   const ok = await call('/login', { method: 'POST', body: { email: visitor.email, password: visitor.password }, ip })
   const cookie = sessionCookie(ok).pair
-  const r = await call('/profile', { method: 'POST', body: { name: '  Flow   Tester ' }, cookie })
+  const r = await call('/account/profile', { method: 'POST', body: { name: '  Flow   Tester ' }, cookie })
   assert.equal(r.status, 200)
   assert.equal(r.data.user.name, 'Flow Tester')
   assert.equal((await call('/me', { cookie })).data.name, 'Flow Tester')
-  assert.equal((await call('/profile', { method: 'POST', body: { name: ' ' }, cookie })).status, 400)
-  assert.equal((await call('/profile', { method: 'POST', body: { name: 'X' } })).status, 401)
+  assert.equal((await call('/account/profile', { method: 'POST', body: { name: 'X' }, cookie })).status, 400)
+  assert.equal((await call('/account/profile', { method: 'POST', body: { name: 'x'.repeat(81) }, cookie })).status, 400)
+  assert.equal((await call('/account/profile', { method: 'POST', body: { name: 'Flow Tester' } })).status, 401)
+})
+
+await step('admins can rename a user; non-admins can’t', async () => {
+  const r = await call(`/admin/users/${userId}/name`, { method: 'POST', body: { name: 'Flow Renamed' }, cookie: admin })
+  assert.equal(r.status, 200)
+  assert.equal(r.data.name, 'Flow Renamed')
+  const ip = `10.252.${Math.floor(Math.random() * 250)}.7`
+  const cookie = sessionCookie(await call('/login', { method: 'POST', body: { email: visitor.email, password: visitor.password }, ip })).pair
+  assert.equal((await call('/me', { cookie })).data.name, 'Flow Renamed')
+  assert.equal((await call(`/admin/users/${userId}/name`, { method: 'POST', body: { name: 'Hacker' }, cookie })).status, 403)
+  assert.equal((await call('/admin/users/999999/name', { method: 'POST', body: { name: 'Nobody' }, cookie: admin })).status, 404)
 })
 
 await step('admin stats', async () => {

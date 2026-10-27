@@ -20,10 +20,46 @@ const DONE = { approve: 'approved', reject: 'rejected', revoke: 'revoked' }
 
 const when = (iso) => (iso ? new Date(iso).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'Never')
 
-function UserCard({ person, tab, isSelf, onAction }) {
+function NameEditor({ person, onRename, onClose }) {
+  const [name, setName] = useState(person.name)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const errorId = `name-error-${person.id}`
+  const inputRef = useRef(null)
+
+  useEffect(() => { inputRef.current?.focus() }, [])
+
+  const save = async (e) => {
+    e.preventDefault()
+    if (name.trim().length < 2) return setError('Please enter at least 2 characters.')
+    setBusy(true)
+    const message = await onRename(person, name)
+    setBusy(false)
+    if (message) return setError(message)
+    onClose()
+  }
+
+  return (
+    <form className="hub-user__rename" onSubmit={save}>
+      <label className="field">
+        <span>Full name</span>
+        <input ref={inputRef} required minLength={2} maxLength={80} value={name} onChange={(e) => setName(e.target.value)} aria-describedby={errorId} />
+      </label>
+      <div id={errorId} className="form-alert" role="alert">{error}</div>
+      <div className="hub-user__actions">
+        <button type="submit" className="btn btn--primary btn--sm" disabled={busy}>{busy ? 'Saving…' : 'Save name'}</button>
+        <button type="button" className="btn btn--ghost btn--sm" onClick={onClose} disabled={busy}>Cancel</button>
+      </div>
+    </form>
+  )
+}
+
+function UserCard({ person, tab, isSelf, onAction, onRename }) {
   const [confirming, setConfirming] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [renaming, setRenaming] = useState(false)
   const confirmRef = useRef(null)
+  const renameRef = useRef(null)
   const isAdmin = person.role === 'admin'
   const actions = isSelf ? [] : isAdmin ? ['reset-password'] : ACTIONS[tab] || []
 
@@ -47,6 +83,13 @@ function UserCard({ person, tab, isSelf, onAction }) {
         </div>
         <span className={`hub-badge hub-badge--${person.status}`}>{isAdmin ? 'Admin' : person.status}</span>
       </div>
+      {renaming ? (
+        <NameEditor person={person} onRename={onRename} onClose={() => { setRenaming(false); requestAnimationFrame(() => renameRef.current?.focus()) }} />
+      ) : (
+        <button ref={renameRef} type="button" className="hub-user__rename-btn" onClick={() => setRenaming(true)}>
+          Edit name<span className="sr-only"> for {person.name}</span>
+        </button>
+      )}
       <dl className="hub-user__meta">
         <div><dt>Company</dt><dd>{person.company || 'Not given'}</dd></div>
         {person.phone && <div><dt>Phone</dt><dd><a href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></dd></div>}
@@ -80,7 +123,7 @@ function UserCard({ person, tab, isSelf, onAction }) {
 }
 
 function AdminPanel() {
-  const { user, expire } = useHubSession()
+  const { user, expire, check } = useHubSession()
   useReveal(useLocation().pathname)
   const [tab, setTab] = useState('pending')
   const [users, setUsers] = useState(null)
@@ -116,6 +159,16 @@ function AdminPanel() {
     } else {
       setAnnounce(`${person.name} has been ${DONE[action]}.`)
     }
+    load()
+  }
+
+  // Returns an error message, or nothing on success.
+  const onRename = async (person, name) => {
+    const r = await hubFetch(`/admin/users/${person.id}/name`, { method: 'POST', body: { name } })
+    if (r.status === 401) return expire()
+    if (!r.ok) return r.data.error
+    setAnnounce(`Name changed to ${r.data.name}.`)
+    if (person.email === user.email) check()
     load()
   }
 
@@ -199,7 +252,7 @@ function AdminPanel() {
               <p className="hub-empty">Nothing here right now.</p>
             ) : (
               <ul className="hub-users">
-                {users.map((p) => <UserCard key={`${p.id}-${p.status}`} person={p} tab={tab} isSelf={p.email === user.email} onAction={onAction} />)}
+                {users.map((p) => <UserCard key={`${p.id}-${p.status}`} person={p} tab={tab} isSelf={p.email === user.email} onAction={onAction} onRename={onRename} />)}
               </ul>
             )}
           </div>

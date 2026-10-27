@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { useHubSession } from '../hooks/useHubSession'
-import { firstName } from '../hooks/hubApi'
+import { firstName, initials } from '../hooks/hubApi'
 
 // Navbar menu for a signed-in Innovation Hub user (desktop; the mobile menu lists the same links).
 export default function HubUserMenu() {
@@ -48,13 +48,19 @@ export default function HubUserMenu() {
         aria-controls="hub-menu-list"
         onClick={() => setOpen((o) => !o)}
       >
-        <span className="hub-menu__avatar" aria-hidden="true">{firstName(user.name).charAt(0).toUpperCase()}</span>
+        <span className="hub-menu__avatar" aria-hidden="true">{initials(user.name)}</span>
         <span className="hub-menu__name" aria-hidden="true">{firstName(user.name)}</span>
-        <span className="sr-only">{firstName(user.name)}, Innovation Hub account menu</span>
+        <span className="sr-only">{user.name}, Innovation Hub account menu</span>
         <ChevronDown size={14} className="nav__chev" aria-hidden="true" />
       </button>
       <div id="hub-menu-list" className="hub-menu__list" hidden={!open} onClick={(e) => { if (e.target.closest('a')) setOpen(false) }}>
-        <p className="hub-menu__who">{user.email}</p>
+        <div className="hub-menu__who">
+          <p className="hub-menu__fullname">
+            {user.name}
+            {user.role === 'admin' && <span className="hub-badge hub-badge--admin">Admin</span>}
+          </p>
+          <p>{user.email}</p>
+        </div>
         <Link to="/hub/app">Innovation Hub</Link>
         <Link to="/hub/account">Account</Link>
         {user.role === 'admin' && <Link to="/hub/admin">Admin</Link>}

@@ -53,7 +53,9 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
   `/data/hub.db` on the `hub-data` volume; argon2id passwords; session = random token in cookie `aftr_hub` (HttpOnly, Secure,
   SameSite=Lax, Domain=.aftrsolutions.com, 7 days; only the SHA-256 is stored). POSTs need an allowed `Origin` (CSRF). Rate limits:
   login 10 / 15 min, signup 5 / hour per IP. Sign-up -> `pending`; an admin approves / rejects / revokes / resets at `/hub/admin`.
-- Admins: GitHub secrets `HUB_ADMIN_EMAILS` (comma-separated) + `HUB_ADMIN_PASSWORD` create them on first start only.
+- Admins: GitHub secrets `HUB_ADMIN_EMAILS` (comma-separated) + `HUB_ADMIN_PASSWORD` create them on first start only;
+  `HUB_ADMIN_NAMES` (same order) names them. Never derive a display name from the email; the UI always shows `users.name`
+  (editable on `/hub/account` and by admins at `/hub/admin`).
 - New-request email: `hub/notify.mjs` (nodemailer over SMTP), on when secrets `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` are set;
   goes to `HUB_NOTIFY_EMAIL` (default info@aftrsolutions.com), max 50/day, never blocks a sign-up.
 - Frontend: `components/HubSessionProvider.jsx` + `hooks/useHubSession.js` (session), `hooks/hubApi.js` (fetch helper, safe `next`),

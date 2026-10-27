@@ -49,3 +49,10 @@ export function safeNext(next) {
 }
 
 export const firstName = (name = '') => name.trim().split(/\s+/)[0] || name
+
+// Avatar letters from the first and last name: "Muhammad Fasihullah" -> "MF".
+export function initials(name = '') {
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (!words.length) return '?'
+  return (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase()
+}

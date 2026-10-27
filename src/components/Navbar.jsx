@@ -4,7 +4,7 @@ import { Moon, Sun, Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
 import { LockupLogo } from './Logo'
 import HubUserMenu from './HubUserMenu'
 import { useHubSession } from '../hooks/useHubSession'
-import { firstName } from '../hooks/hubApi'
+import { initials } from '../hooks/hubApi'
 import { nav } from '../data/site'
 import { services } from '../data/services'
 
@@ -75,7 +75,7 @@ export default function Navbar({ theme, onToggleTheme }) {
                 </div>
               </div>
             ) : (
-              <NavLink key={l.to} to={l.to} end={l.end} className="nav__link">{l.label}</NavLink>
+              <NavLink key={l.to} to={l.to} end={l.end} className="nav__link" aria-label={l.short ? l.label : undefined}>{l.short || l.label}</NavLink>
             )
           )}
         </nav>
@@ -103,6 +103,21 @@ export default function Navbar({ theme, onToggleTheme }) {
       </div>
 
       <div className="nav__mobile" hidden={!open} onClick={(e) => { if (e.target.closest('a')) setOpen(false) }}>
+        {hub.status === 'in' && (
+          <div className="nav__mobile-sub nav__mobile-hub">
+            <div className="nav__mobile-user">
+              <span className="hub-menu__avatar" aria-hidden="true">{initials(hub.user.name)}</span>
+              <span>
+                <strong>{hub.user.name}</strong>
+                <small>{hub.user.email}</small>
+              </span>
+            </div>
+            <Link to="/hub/app">Innovation Hub</Link>
+            <Link to="/hub/account">Account</Link>
+            {hub.user.role === 'admin' && <Link to="/hub/admin">Admin</Link>}
+            <button type="button" onClick={() => { setOpen(false); hubSignOut() }}>Sign out</button>
+          </div>
+        )}
         <NavLink to="/" end>Home</NavLink>
         <NavLink to="/services">Services</NavLink>
         <div className="nav__mobile-sub">
@@ -113,15 +128,6 @@ export default function Navbar({ theme, onToggleTheme }) {
         {nav.filter((l) => !l.hasMenu && l.to !== '/').map((l) => (
           <NavLink key={l.to} to={l.to}>{l.label}</NavLink>
         ))}
-        {hub.status === 'in' && (
-          <div className="nav__mobile-sub nav__mobile-hub">
-            <p>Signed in as {firstName(hub.user.name)}</p>
-            <Link to="/hub/app">Your demos</Link>
-            <Link to="/hub/account">Account</Link>
-            {hub.user.role === 'admin' && <Link to="/hub/admin">Admin</Link>}
-            <button type="button" onClick={() => { setOpen(false); hubSignOut() }}>Sign out</button>
-          </div>
-        )}
         <Link to="/contact" className="btn btn--primary">Let’s talk</Link>
       </div>
     </header>

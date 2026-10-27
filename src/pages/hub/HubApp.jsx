@@ -5,7 +5,6 @@ import DemoCard from '../../components/DemoCard'
 import RequireHub from '../../components/RequireHub'
 import { demos } from '../../data/hub'
 import { useHubSession } from '../../hooks/useHubSession'
-import { firstName } from '../../hooks/hubApi'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { useReveal } from '../../hooks/useReveal'
 
@@ -16,7 +15,8 @@ function Gallery() {
     <>
       <PageHeader
         eyebrow="Innovation Hub"
-        title={`Welcome, ${firstName(user.name)}.`}
+        className="page-header--welcome"
+        title={`Welcome, ${user.name}.`}
         lead="Pick a product to see what it does and launch its demo. Every demo runs on sample data, so explore as much as you like."
       >
         <div className="hero__cta reveal">

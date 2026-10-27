@@ -3,8 +3,8 @@
 // proxies /api/hub/* here (see nginx.conf); plain node:http like server/index.mjs.
 //
 //   public  POST /signup, POST /login, GET /health, GET /auth/verify (Caddy forward_auth)
-//   user    POST /logout, GET /me, POST /profile, POST /change-password, GET /demos, POST /demos/:slug/open
-//   admin   GET /admin/users?status=, POST /admin/users/:id/(approve|reject|revoke|reset-password), GET /admin/stats
+//   user    POST /logout, GET /me, POST /account/profile, POST /change-password, GET /demos, POST /demos/:slug/open
+//   admin   GET /admin/users?status=, POST /admin/users/:id/(approve|reject|revoke|reset-password|name), GET /admin/stats
 import http from 'node:http'
 import { createHash, randomBytes } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
@@ -139,6 +139,12 @@ function email(body) {
   return value
 }
 
+function displayName(body) {
+  const value = text(body, 'name', { label: 'Name', max: 80 })
+  if (value.length < 2) throw new HttpError(400, 'Name must be at least 2 characters.')
+  return value
+}
+
 function password(body, key = 'password', label = 'Password') {
   const value = body[key]
   if (typeof value !== 'string' || !value) throw new HttpError(400, `${label} is required.`)
@@ -246,7 +252,7 @@ async function changePassword(req, res, user) {
 }
 
 async function updateProfile(req, res, user) {
-  const name = text(await readJson(req), 'name', { label: 'Name', max: 100 })
+  const name = displayName(await readJson(req))
   q.setName.run(name, user.id)
   send(res, 200, { user: publicUser({ ...user, name }) })
 }
@@ -285,6 +291,14 @@ function listUsers(res, url) {
 }
 
 const ACTIONS = { approve: 'approved', reject: 'rejected', revoke: 'revoked' }
+
+async function adminRename(req, res, admin, id) {
+  const name = displayName(await readJson(req))
+  if (!q.userById.get(id)) throw new HttpError(404, 'User not found.')
+  q.setName.run(name, id)
+  console.log(`hub: admin ${admin.id} renamed user ${id}`)
+  send(res, 200, { ok: true, name })
+}
 
 async function adminAction(res, admin, id, action) {
   const target = q.userById.get(id)
@@ -339,7 +353,7 @@ async function route(req, res) {
   if (method === 'POST' && path === '/logout') return logout(req, res)
 
   if (method === 'GET' && path === '/me') return send(res, 200, publicUser(requireUser(req)))
-  if (method === 'POST' && path === '/profile') return updateProfile(req, res, requireUser(req))
+  if (method === 'POST' && path === '/account/profile') return updateProfile(req, res, requireUser(req))
   if (method === 'POST' && path === '/change-password') return changePassword(req, res, requireUser(req))
   if (method === 'GET' && path === '/demos') { requireUser(req); return send(res, 200, { demos: demos.map(publicDemo) }) }
   let m = path.match(/^\/demos\/([a-z0-9-]{1,60})\/open$/)
@@ -349,6 +363,8 @@ async function route(req, res) {
     const admin = requireUser(req, 'admin')
     if (method === 'GET' && path === '/admin/users') return listUsers(res, url)
     if (method === 'GET' && path === '/admin/stats') return stats(res)
+    m = path.match(/^\/admin\/users\/(\d{1,10})\/name$/)
+    if (method === 'POST' && m) return adminRename(req, res, admin, Number(m[1]))
     m = path.match(/^\/admin\/users\/(\d{1,10})\/(approve|reject|revoke|reset-password)$/)
     if (method === 'POST' && m) return adminAction(res, admin, Number(m[1]), m[2])
   }
@@ -357,16 +373,49 @@ async function route(req, res) {
 
 // ---------- Admin bootstrap ----------
 // HUB_ADMIN_EMAILS (comma-separated) + HUB_ADMIN_PASSWORD create the admins on first start.
-// Existing accounts are never touched, so changing the password afterwards sticks.
+// HUB_ADMIN_NAMES (same order) gives their names. Existing passwords are never touched.
+
+// Without HUB_ADMIN_NAMES, an admin gets the co-founder name (public on the About page) that
+// clearly matches their email address, e.g. mfasihullah84@... -> Muhammad Fasihullah.
+const FOUNDERS = ['Muhammad Fasihullah', 'Abdul Rafay', 'Syed Taha Javaid', 'Syed Ali Javaid']
+const COMMON_WORDS = new Set(['muhammad', 'abdul', 'syed'])
+const localPart = (address) => address.slice(0, address.indexOf('@'))
+
+function founderFor(address) {
+  const local = localPart(address)
+  const scored = FOUNDERS.map((name) => ({
+    name,
+    score: name.toLowerCase().split(' ').filter((w) => w.length >= 4 && !COMMON_WORDS.has(w) && local.includes(w)).length,
+  })).sort((a, b) => b.score - a.score)
+  return scored[0].score > 0 && scored[0].score > scored[1].score ? scored[0].name : null
+}
+
+// Older versions named admins after their email prefix ("Mfasihullah84"); those get fixed.
+function isPlaceholderName(name, address) {
+  const local = localPart(address).replace(/[._-]+/g, ' ')
+  return !name.trim() || name.trim().toLowerCase() === local.toLowerCase()
+}
+
 async function bootstrapAdmins() {
   const emails = (process.env.HUB_ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
+  const names = (process.env.HUB_ADMIN_NAMES || '').split(',').map((n) => n.trim().replace(/\s+/g, ' ').slice(0, 80))
   const pass = process.env.HUB_ADMIN_PASSWORD || ''
+  const nameFor = (address, i) => (names[i]?.length >= 2 ? names[i] : founderFor(address))
+
+  for (const [i, address] of emails.entries()) {
+    const row = q.userByEmail.get(address)
+    const name = nameFor(address, i)
+    if (row?.role === 'admin' && name && name !== row.name && isPlaceholderName(row.name, address)) {
+      q.setName.run(name, row.id)
+      console.log(`hub: set the name of admin ${row.id}`)
+    }
+  }
+
   if (!emails.length || !pass) return
   if (pass.length < MIN_PASSWORD) { console.warn(`hub: HUB_ADMIN_PASSWORD is shorter than ${MIN_PASSWORD} characters, admins not created`); return }
-  for (const address of emails) {
+  for (const [i, address] of emails.entries()) {
     if (q.userByEmail.get(address)) continue
-    const local = address.split('@')[0].replace(/[._-]+/g, ' ')
-    const name = local.charAt(0).toUpperCase() + local.slice(1)
+    const name = nameFor(address, i) || 'Admin'
     const t = now()
     q.insertUser.run({ name, email: address, company: 'AFTR Solutions', phone: '', reason: '', password_hash: await hash(pass, ARGON), role: 'admin', status: 'approved', created_at: t, approved_at: t })
     console.log(`hub: created admin ${address}`)

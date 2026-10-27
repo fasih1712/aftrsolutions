@@ -2,9 +2,9 @@ import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { technologies } from '../data/site'
 
-export function PageHeader({ eyebrow, title, lead, children }) {
+export function PageHeader({ eyebrow, title, lead, className = '', children }) {
   return (
-    <section className="page-header">
+    <section className={`page-header ${className}`.trim()}>
       <div className="hero__glow" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
       <div className="container page-header__inner">
