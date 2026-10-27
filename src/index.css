@@ -250,11 +250,12 @@ button { font: inherit; color: inherit; }
 /* open mobile menu: nearly solid so page text doesn't show through the links */
 .nav--open { background: color-mix(in srgb, var(--bg) 97%, transparent); }
 .nav__inner { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.nav__brand { flex: none; }
 .nav__brand .logo-swap { height: 42px; }
 .nav__links { display: flex; gap: 6px; align-items: center; }
 .nav__link {
   position: relative; display: inline-flex; align-items: center; gap: 4px;
-  font-size: var(--fs-sm); color: var(--text-2); padding: 8px 14px; border-radius: 999px;
+  font-size: var(--fs-sm); color: var(--text-2); padding: 8px 14px; border-radius: 999px; white-space: nowrap;
   transition: color 0.2s, background-color 0.2s;
 }
 .nav__link:hover { color: var(--text); background: var(--accent-soft); }
@@ -300,13 +301,15 @@ button { font: inherit; color: inherit; }
   border-top: 1px solid var(--border); font-size: var(--fs-sm); font-weight: 500; color: var(--text-2);
 }
 .mega__all:hover { color: var(--text); }
-.nav__actions { display: flex; align-items: center; gap: 10px; }
+.nav__actions { display: flex; align-items: center; gap: 10px; flex: none; }
+.nav__cta { white-space: nowrap; }
 .nav__burger { display: none; }
 .nav__mobile {
   display: flex; flex-direction: column; padding: 8px 24px 28px;
   border-top: 1px solid var(--border); max-height: calc(100vh - 72px); overflow-y: auto;
 }
 .nav__mobile[hidden] { display: none; }
+.nav__mobile > * { flex-shrink: 0; } /* a long menu scrolls instead of squashing the button */
 .nav__mobile > a:not(.btn) { padding: 14px 0; font-size: var(--fs-lg); font-weight: 500; border-bottom: 1px solid var(--border); }
 .nav__mobile > a.active { color: var(--text); }
 .nav__mobile-sub { display: grid; padding: 6px 0 10px 14px; border-bottom: 1px solid var(--border); }
@@ -1133,9 +1136,12 @@ button { font: inherit; color: inherit; }
   .svc-list__item { grid-template-columns: 40px 46px 1fr 24px; }
   .svc-list__text { display: none; }
 }
-@media (max-width: 880px) {
-  .nav__links, .nav__cta { display: none; }
+/* the full link row needs about 1000px; below that the burger menu takes over */
+@media (max-width: 1024px) {
+  .nav__links, .nav__cta, .hub-menu { display: none; }
   .nav__burger { display: grid; }
+}
+@media (max-width: 880px) {
   .section__head--split, .why, .who, .contact__inner, .svc-hero, .svc-split, .about-teaser, .story, .product-row { grid-template-columns: 1fr; gap: 32px; }
   .product-row { gap: 0; }
   .product-row--flip .product-row__art { order: 0; }
@@ -1272,6 +1278,7 @@ p.page-header__title { margin: 0; letter-spacing: -0.035em; }
   border: 1px solid var(--border); background: transparent; font-size: var(--fs-sm); font-weight: 500; cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
 }
+.hub-menu__name { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hub-menu__btn:hover { background: var(--accent-soft); border-color: var(--border-strong); }
 .hub-menu__btn[aria-expanded='true'] .nav__chev { transform: rotate(180deg); }
 .hub-menu__avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--btn-bg); color: var(--btn-text); font-size: var(--fs-xs); font-weight: 600; }
@@ -1303,16 +1310,20 @@ p.page-header__title { margin: 0; letter-spacing: -0.035em; }
 .hub-teaser .btn { position: relative; flex: none; }
 
 /* the extra nav link needs a little more room before the burger menu takes over */
-@media (max-width: 1180px) and (min-width: 881px) {
+@media (max-width: 1180px) and (min-width: 1025px) {
   .nav__inner { gap: 16px; }
   .nav__link { padding: 8px 10px; }
+}
+/* signed in: the account button shrinks to just the initial so the links keep one line */
+@media (max-width: 1280px) and (min-width: 1025px) {
+  .hub-menu__btn { padding: 0 4px; gap: 0; }
+  .hub-menu__name, .hub-menu__btn .nav__chev { display: none; }
 }
 @media (max-width: 1024px) {
   .hub-stats { grid-template-columns: repeat(2, 1fr); }
   .hub-users { grid-template-columns: 1fr; }
 }
 @media (max-width: 880px) {
-  .hub-menu { display: none; }
   .hub-demo { grid-template-columns: 1fr; }
   .hub-teaser { flex-direction: column; align-items: flex-start; }
 }

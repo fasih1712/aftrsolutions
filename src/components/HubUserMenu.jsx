@@ -49,8 +49,8 @@ export default function HubUserMenu() {
         onClick={() => setOpen((o) => !o)}
       >
         <span className="hub-menu__avatar" aria-hidden="true">{firstName(user.name).charAt(0).toUpperCase()}</span>
-        {firstName(user.name)}
-        <span className="sr-only">, Innovation Hub account menu</span>
+        <span className="hub-menu__name" aria-hidden="true">{firstName(user.name)}</span>
+        <span className="sr-only">{firstName(user.name)}, Innovation Hub account menu</span>
         <ChevronDown size={14} className="nav__chev" aria-hidden="true" />
       </button>
       <div id="hub-menu-list" className="hub-menu__list" hidden={!open} onClick={(e) => { if (e.target.closest('a')) setOpen(false) }}>
