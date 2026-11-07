@@ -20,20 +20,26 @@ const DONE = { approve: 'approved', reject: 'rejected', revoke: 'revoked' }
 
 const when = (iso) => (iso ? new Date(iso).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'Never')
 
-function NameEditor({ person, onRename, onClose }) {
-  const [name, setName] = useState(person.name)
+const FIELDS = {
+  name: { label: 'Full name', save: 'Save name', edit: 'Edit name', input: { minLength: 2, maxLength: 80 } },
+  email: { label: 'Email', save: 'Save email', edit: 'Edit email', input: { type: 'email', maxLength: 254, autoCapitalize: 'none', spellCheck: false } },
+}
+
+function FieldEditor({ person, field, onSave, onClose }) {
+  const f = FIELDS[field]
+  const [value, setValue] = useState(person[field])
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const errorId = `name-error-${person.id}`
+  const errorId = `${field}-error-${person.id}`
   const inputRef = useRef(null)
 
   useEffect(() => { inputRef.current?.focus() }, [])
 
   const save = async (e) => {
     e.preventDefault()
-    if (name.trim().length < 2) return setError('Please enter at least 2 characters.')
+    if (value.trim().length < 2) return setError('Please enter at least 2 characters.')
     setBusy(true)
-    const message = await onRename(person, name)
+    const message = await onSave(person, field, value.trim())
     setBusy(false)
     if (message) return setError(message)
     onClose()
@@ -42,24 +48,25 @@ function NameEditor({ person, onRename, onClose }) {
   return (
     <form className="hub-user__rename" onSubmit={save}>
       <label className="field">
-        <span>Full name</span>
-        <input ref={inputRef} required minLength={2} maxLength={80} value={name} onChange={(e) => setName(e.target.value)} aria-describedby={errorId} />
+        <span>{f.label}</span>
+        <input ref={inputRef} required {...f.input} value={value} onChange={(e) => setValue(e.target.value)} aria-describedby={errorId} />
       </label>
+      {field === 'email' && <p className="field-hint">They sign in with the new email and the same password. Any open sessions end.</p>}
       <div id={errorId} className="form-alert" role="alert">{error}</div>
       <div className="hub-user__actions">
-        <button type="submit" className="btn btn--primary btn--sm" disabled={busy}>{busy ? 'Saving…' : 'Save name'}</button>
+        <button type="submit" className="btn btn--primary btn--sm" disabled={busy}>{busy ? 'Saving…' : f.save}</button>
         <button type="button" className="btn btn--ghost btn--sm" onClick={onClose} disabled={busy}>Cancel</button>
       </div>
     </form>
   )
 }
 
-function UserCard({ person, tab, isSelf, onAction, onRename }) {
+function UserCard({ person, tab, isSelf, onAction, onEdit }) {
   const [confirming, setConfirming] = useState(null)
   const [busy, setBusy] = useState(false)
-  const [renaming, setRenaming] = useState(false)
+  const [editing, setEditing] = useState(null) // 'name' | 'email' | null
   const confirmRef = useRef(null)
-  const renameRef = useRef(null)
+  const editRefs = useRef({})
   const isAdmin = person.role === 'admin'
   const actions = isSelf ? [] : isAdmin ? ['reset-password'] : ACTIONS[tab] || []
 
@@ -83,12 +90,19 @@ function UserCard({ person, tab, isSelf, onAction, onRename }) {
         </div>
         <span className={`hub-badge hub-badge--${person.status}`}>{isAdmin ? 'Admin' : person.status}</span>
       </div>
-      {renaming ? (
-        <NameEditor person={person} onRename={onRename} onClose={() => { setRenaming(false); requestAnimationFrame(() => renameRef.current?.focus()) }} />
+      {editing ? (
+        <FieldEditor
+          person={person} field={editing} onSave={onEdit}
+          onClose={() => { const f = editing; setEditing(null); requestAnimationFrame(() => editRefs.current[f]?.focus()) }}
+        />
       ) : (
-        <button ref={renameRef} type="button" className="hub-user__rename-btn" onClick={() => setRenaming(true)}>
-          Edit name<span className="sr-only"> for {person.name}</span>
-        </button>
+        <div className="hub-user__edits">
+          {(isSelf ? ['name'] : ['name', 'email']).map((f) => (
+            <button key={f} ref={(el) => { editRefs.current[f] = el }} type="button" className="hub-user__rename-btn" onClick={() => setEditing(f)}>
+              {FIELDS[f].edit}<span className="sr-only"> for {person.name}</span>
+            </button>
+          ))}
+        </div>
       )}
       <dl className="hub-user__meta">
         <div><dt>Company</dt><dd>{person.company || 'Not given'}</dd></div>
@@ -163,12 +177,12 @@ function AdminPanel() {
   }
 
   // Returns an error message, or nothing on success.
-  const onRename = async (person, name) => {
-    const r = await hubFetch(`/admin/users/${person.id}/name`, { method: 'POST', body: { name } })
+  const onEdit = async (person, field, value) => {
+    const r = await hubFetch(`/admin/users/${person.id}/${field}`, { method: 'POST', body: { [field]: value } })
     if (r.status === 401) return expire()
     if (!r.ok) return r.data.error
-    setAnnounce(`Name changed to ${r.data.name}.`)
-    if (person.email === user.email) check()
+    setAnnounce(field === 'name' ? `Name changed to ${r.data.name}.` : `${person.name} now signs in with ${r.data.email}.`)
+    if (field === 'name' && person.email === user.email) check()
     load()
   }
 
@@ -252,7 +266,7 @@ function AdminPanel() {
               <p className="hub-empty">Nothing here right now.</p>
             ) : (
               <ul className="hub-users">
-                {users.map((p) => <UserCard key={`${p.id}-${p.status}`} person={p} tab={tab} isSelf={p.email === user.email} onAction={onAction} onRename={onRename} />)}
+                {users.map((p) => <UserCard key={`${p.id}-${p.status}`} person={p} tab={tab} isSelf={p.email === user.email} onAction={onAction} onEdit={onEdit} />)}
               </ul>
             )}
           </div>

@@ -1266,7 +1266,8 @@ p.page-header__title { margin: 0; letter-spacing: -0.035em; }
 .hub-user__head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
 .hub-user__head h3 { font-size: var(--fs-lg); }
 .hub-user__head a { font-size: var(--fs-sm); color: var(--text-2); overflow-wrap: anywhere; }
-.hub-user__rename-btn { justify-self: start; margin-top: -8px; padding: 0; border: 0; background: none; font-size: var(--fs-sm); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.hub-user__edits { display: flex; gap: 18px; margin-top: -8px; }
+.hub-user__rename-btn { justify-self: start; padding: 0; border: 0; background: none; font-size: var(--fs-sm); color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .hub-user__rename-btn:hover { color: var(--text); }
 .hub-user__rename { display: grid; gap: 10px; }
 .hub-user__meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; margin: 0; }

@@ -4,7 +4,7 @@
 //
 //   public  POST /signup, POST /login, GET /health, GET /auth/verify (Caddy forward_auth)
 //   user    POST /logout, GET /me, POST /account/profile, POST /change-password, GET /demos, POST /demos/:slug/open
-//   admin   GET /admin/users?status=, POST /admin/users/:id/(approve|reject|revoke|reset-password|name), GET /admin/stats
+//   admin   GET /admin/users?status=, POST /admin/users/:id/(approve|reject|revoke|reset-password|name|email), GET /admin/stats
 import http from 'node:http'
 import { createHash, randomBytes } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
@@ -290,6 +290,26 @@ function listUsers(res, url) {
   send(res, 200, { users: q.listUsers.all({ status }) })
 }
 
+// Fixes a mistyped address. The old address stops working at once and their sessions end, so
+// they sign in again with the new one (same password).
+async function adminEmail(req, res, admin, id) {
+  const address = email(await readJson(req))
+  const target = q.userById.get(id)
+  if (!target) throw new HttpError(404, 'User not found.')
+  if (target.id === admin.id) throw new HttpError(400, 'You can’t change your own email here.')
+  if (address === target.email) return send(res, 200, { ok: true, email: address })
+  const taken = q.userByEmail.get(address)
+  if (taken) throw new HttpError(409, 'Another account already uses that email.')
+  try {
+    db.transaction(() => { q.setEmail.run(address, id); q.deleteSessionsFor.run(id) })()
+  } catch (error) {
+    if (error?.code === 'SQLITE_CONSTRAINT_UNIQUE') throw new HttpError(409, 'Another account already uses that email.')
+    throw error
+  }
+  console.log(`hub: admin ${admin.id} changed the email of user ${id}`)
+  send(res, 200, { ok: true, email: address })
+}
+
 const ACTIONS = { approve: 'approved', reject: 'rejected', revoke: 'revoked' }
 
 async function adminRename(req, res, admin, id) {
@@ -365,6 +385,8 @@ async function route(req, res) {
     if (method === 'GET' && path === '/admin/stats') return stats(res)
     m = path.match(/^\/admin\/users\/(\d{1,10})\/name$/)
     if (method === 'POST' && m) return adminRename(req, res, admin, Number(m[1]))
+    m = path.match(/^\/admin\/users\/(\d{1,10})\/email$/)
+    if (method === 'POST' && m) return adminEmail(req, res, admin, Number(m[1]))
     m = path.match(/^\/admin\/users\/(\d{1,10})\/(approve|reject|revoke|reset-password)$/)
     if (method === 'POST' && m) return adminAction(res, admin, Number(m[1]), m[2])
   }
