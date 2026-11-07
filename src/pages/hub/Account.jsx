@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { PageHeader } from '../../components/Common'
+import PasswordField from '../../components/PasswordField'
 import RequireHub from '../../components/RequireHub'
 import { useHubSession } from '../../hooks/useHubSession'
 import { hubFetch } from '../../hooks/hubApi'
@@ -80,18 +81,9 @@ function AccountPage() {
           </form>
           <form className="card contact__form reveal" onSubmit={submit}>
             <h2 className="hub-form__title">Change password</h2>
-            <label className="field">
-              <span>Current password</span>
-              <input required type="password" value={form.currentPassword} onChange={update('currentPassword')} autoComplete="current-password" aria-describedby="account-message" />
-            </label>
-            <label className="field">
-              <span>New password</span>
-              <input required type="password" minLength={MIN_PASSWORD} maxLength={200} value={form.newPassword} onChange={update('newPassword')} autoComplete="new-password" aria-describedby="new-pw-hint account-message" />
-            </label>
-            <label className="field">
-              <span>Confirm new password</span>
-              <input required type="password" maxLength={200} value={form.confirm} onChange={update('confirm')} autoComplete="new-password" aria-describedby="account-message" />
-            </label>
+            <PasswordField label="Current password" required value={form.currentPassword} onChange={update('currentPassword')} autoComplete="current-password" aria-describedby="account-message" />
+            <PasswordField label="New password" required minLength={MIN_PASSWORD} maxLength={200} value={form.newPassword} onChange={update('newPassword')} autoComplete="new-password" aria-describedby="new-pw-hint account-message" />
+            <PasswordField label="Confirm new password" required maxLength={200} value={form.confirm} onChange={update('confirm')} autoComplete="new-password" aria-describedby="account-message" />
             <p id="new-pw-hint" className="field-hint">At least {MIN_PASSWORD} characters.</p>
             <div id="account-message" className="form-alert" role="alert">{message.type === 'error' ? message.text : ''}</div>
             <div className="form-alert form-alert--ok" role="status">{message.type === 'ok' ? message.text : ''}</div>

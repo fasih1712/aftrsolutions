@@ -1221,6 +1221,17 @@ p.page-header__title { margin: 0; letter-spacing: -0.035em; }
 .form-alert { font-size: var(--fs-sm); color: var(--text); border-radius: 12px; border: 1px solid var(--border-strong); background: var(--accent-soft); padding: 12px 14px; }
 .form-alert:empty { padding: 0; border: 0; }
 .field input[aria-invalid='true'] { border-color: var(--text); }
+.field__label { font-size: var(--fs-sm); font-weight: 500; color: var(--text-2); }
+.pw-input { position: relative; }
+.field .pw-input input { padding-right: 52px; }
+.pw-input__toggle {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 40px; height: 40px;
+  background: none; border: 0; border-radius: 10px; color: var(--muted); cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+}
+.pw-input__toggle:hover { color: var(--text); background: var(--accent-soft); }
+.pw-input__toggle:focus-visible { outline: 2px solid var(--border-strong); outline-offset: 0; color: var(--text); }
 .hub-narrow { max-width: 620px; }
 .hub-stack { display: grid; gap: 1.5rem; }
 .hub-form__title { font-size: var(--fs-xl); }

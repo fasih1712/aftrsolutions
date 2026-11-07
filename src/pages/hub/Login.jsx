@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import PasswordField from '../../components/PasswordField'
 import { useHubSession } from '../../hooks/useHubSession'
 import { hubFetch, safeNext } from '../../hooks/hubApi'
 import { usePageTitle } from '../../hooks/usePageTitle'
@@ -65,14 +66,11 @@ export default function HubLogin() {
               aria-invalid={error ? true : undefined} aria-describedby="login-error"
             />
           </label>
-          <label className="field">
-            <span>Password</span>
-            <input
-              required type="password" value={form.password} onChange={update('password')}
-              autoComplete="current-password"
-              aria-invalid={error ? true : undefined} aria-describedby="login-error"
-            />
-          </label>
+          <PasswordField
+            label="Password" required value={form.password} onChange={update('password')}
+            autoComplete="current-password"
+            aria-invalid={error ? true : undefined} aria-describedby="login-error"
+          />
           <div id="login-error" className="form-alert" role="alert">{error}</div>
           <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
             {busy ? 'Signing in…' : <>Sign in <ArrowRight size={16} /></>}

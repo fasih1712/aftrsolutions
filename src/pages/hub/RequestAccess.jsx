@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import PasswordField from '../../components/PasswordField'
 import { hubFetch, firstName } from '../../hooks/hubApi'
 import { usePageTitle } from '../../hooks/usePageTitle'
 
@@ -91,22 +92,16 @@ export default function HubRequestAccess() {
               />
             </label>
             <div className="field-row">
-              <label className="field">
-                <span>Password</span>
-                <input
-                  required type="password" minLength={MIN_PASSWORD} maxLength={200} value={form.password} onChange={update('password')}
-                  autoComplete="new-password" aria-describedby="pw-hint request-error"
-                  aria-invalid={invalid(form.password.length < MIN_PASSWORD || form.password !== form.confirm)}
-                />
-              </label>
-              <label className="field">
-                <span>Confirm password</span>
-                <input
-                  required type="password" maxLength={200} value={form.confirm} onChange={update('confirm')}
-                  autoComplete="new-password" aria-describedby="request-error"
-                  aria-invalid={invalid(form.password !== form.confirm)}
-                />
-              </label>
+              <PasswordField
+                label="Password" required minLength={MIN_PASSWORD} maxLength={200} value={form.password} onChange={update('password')}
+                autoComplete="new-password" aria-describedby="pw-hint request-error"
+                aria-invalid={invalid(form.password.length < MIN_PASSWORD || form.password !== form.confirm)}
+              />
+              <PasswordField
+                label="Confirm password" required maxLength={200} value={form.confirm} onChange={update('confirm')}
+                autoComplete="new-password" aria-describedby="request-error"
+                aria-invalid={invalid(form.password !== form.confirm)}
+              />
             </div>
             <p id="pw-hint" className="field-hint">At least {MIN_PASSWORD} characters. A short phrase is easy to remember.</p>
             <label className="check">
