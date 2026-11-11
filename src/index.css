@@ -612,7 +612,7 @@ button { font: inherit; color: inherit; }
 .art__cubes i:nth-child(3) { bottom: 48px; animation-delay: 0.7s; }
 @keyframes cubeDrop { 0% { opacity: 0; transform: translateY(-40px); } 15%, 75% { opacity: 0.8; transform: none; } 90%, 100% { opacity: 0; transform: none; } }
 
-/* Scrap Management: recycle arrows turn one step at a time */
+/* Wastage Management: recycle arrows turn one step at a time */
 .art--spin .art__icon svg { animation: recycle 4.5s var(--ease) infinite; }
 @keyframes recycle { 0%, 20% { transform: rotate(0); } 33%, 53% { transform: rotate(120deg); } 66%, 86% { transform: rotate(240deg); } 100% { transform: rotate(360deg); } }
 .art--spin .art__ring--outer { animation-duration: 12s; animation-direction: reverse; }

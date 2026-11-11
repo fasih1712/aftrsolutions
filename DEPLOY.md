@@ -144,9 +144,9 @@ on its own subdomain such as `demo-chatbot.aftrsolutions.com`. The Hub session c
 
 Revoking a user deletes their sessions, so they lose access to every demo at once.
 
-#### Scrap Management demo (to do: put it behind the Hub login)
+#### Wastage Management demo (slug `scrap-management`) (to do: put it behind the Hub login)
 
-The Scrap Management demo is live at `http://13.233.73.99:8090`. It is set as a public `openUrl` in `src/data/hub.js`
+The Wastage Management demo is live at `http://13.233.73.99:8090`. It is set as a public `openUrl` in `src/data/hub.js`
 (the owner chose this, so the /hub card opens it straight away) and is an explicit exception in `hub/demo-urls.mjs`.
 That raw IP:port link is **not protected by the Hub login** (anyone who has the link can open it) and it is
 plain HTTP. To protect it like the other demos:

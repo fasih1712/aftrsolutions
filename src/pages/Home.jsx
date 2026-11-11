@@ -149,7 +149,7 @@ export default function Home() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHead split eyebrow="Products" title="AI products and business software." lead="AI chatbots for WhatsApp and websites, plus our own Phelix ERP and Scrap Management system. Ready to deploy and tailored to you." />
+          <SectionHead split eyebrow="Products" title="AI products and business software." lead="AI chatbots for WhatsApp and websites, plus our own Phelix ERP and Wastage Management System. Ready to deploy and tailored to you." />
           <div className="products products--four">
             {ownProducts.map(({ icon: Icon, tag, title, text }, i) => (
               <Link to={`/products#${slugify(title)}`} className="product reveal" key={title} style={{ '--d': `${i * 90}ms` }}>

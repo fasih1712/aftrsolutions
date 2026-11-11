@@ -12,14 +12,14 @@
 export const demos = [
   {
     slug: 'scrap-management',
-    product: 'Scrap Management System',
-    summary: 'Explore a working scrap management system with sample data: stock, transactions and reports.',
+    product: 'Wastage Management System',
+    summary: 'Explore a working wastage management system with sample data: stock, transactions and reports.',
     type: 'live',
     // Public on purpose (owner's call): clicking the card opens the demo directly.
-    // TODO: move to https://demo-scrap.aftrsolutions.com behind the Hub login (DEPLOY.md).
+    // Slug stays 'scrap-management' (access logs use it). TODO: move to https://demo-scrap.aftrsolutions.com behind the Hub login (DEPLOY.md).
     openUrl: 'http://13.233.73.99:8090',
     tryThis: [
-      'Browse the scrap inventory and filter by category',
+      'Browse the wastage inventory and filter by category',
       'Record a sample purchase or sale',
       'Open the reports dashboard',
     ],

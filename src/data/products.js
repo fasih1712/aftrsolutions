@@ -5,12 +5,12 @@ import { Boxes, Recycle, MessageCircle, BotMessageSquare, LineChart } from 'luci
 export const products = [
   {
     icon: Recycle,
-    tag: 'Operations',
-    title: 'Scrap Management System',
+    tag: 'Industrial Solution for Wastage',
+    title: 'Wastage Management System',
     anim: 'spin',
     own: true,
-    text: 'Track scrap from collection to sale: inventory, weighing, pricing, buyers and reports in one place, so nothing goes missing and every kilo is accounted for.',
-    features: ['Scrap inventory by type and grade', 'Purchase and sales records', 'Buyer and vendor management', 'Reports and dashboards'],
+    text: 'Track industrial wastage from collection to sale: inventory, weighing, pricing, buyers and reports in one place, so nothing goes missing and every kilo is accounted for.',
+    features: ['Wastage inventory by type and grade', 'Purchase and sales records', 'Buyer and vendor management', 'Reports and dashboards'],
   },
   {
     icon: MessageCircle,

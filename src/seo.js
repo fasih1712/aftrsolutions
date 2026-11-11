@@ -69,7 +69,7 @@ const pages = {
   '/products': {
     title: 'WhatsApp AI Chatbot, Website Chatbot & Phelix ERP | AFTR Solutions',
     description:
-      'Ready-to-deploy AI products from AFTR: WhatsApp AI chatbot, website AI chatbot, AI forecasting and analytics, Phelix ERP and scrap management software.',
+      'Ready-to-deploy AI products from AFTR: WhatsApp AI chatbot, website AI chatbot, AI forecasting and analytics, Phelix ERP and wastage management software.',
     crumbs: [{ name: 'Products', path: '/products' }],
   },
   '/about': {
