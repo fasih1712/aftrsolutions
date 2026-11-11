@@ -4,17 +4,19 @@
 //
 // Normally a demo URL is an https://demo-*.aftrsolutions.com subdomain behind Caddy forward_auth.
 // Entries listed in RAW_URL_EXCEPTIONS are temporary, explicit exceptions to that rule.
+// A demo with a public `openUrl` in src/data/hub.js uses that when it has no entry here.
+import { demos } from '../src/data/hub.js'
+
 export const demoUrls = {
-  // TODO: move to https://demo-scrap.aftrsolutions.com (see DEPLOY.md "Scrap Management demo").
-  // Until then this raw IP:port is plain HTTP and NOT protected by the Hub login.
-  'scrap-management': 'http://13.233.73.99:8090',
+  // 'demo-chatbot': 'https://demo-chatbot.aftrsolutions.com',
 }
 
+// TODO: remove once the scrap demo moves to https://demo-scrap.aftrsolutions.com (see DEPLOY.md).
 const RAW_URL_EXCEPTIONS = new Set(['scrap-management'])
 
 /** The URL for a live demo, or null when it isn't set or isn't allowed. */
 export function demoUrl(slug) {
-  const raw = demoUrls[slug]
+  const raw = demoUrls[slug] || demos.find((d) => d.slug === slug)?.openUrl
   if (!raw) return null
   try {
     const u = new URL(raw)
