@@ -2,11 +2,23 @@
 // Read by the website (src/pages/Hub*.jsx) and by the hub-api service (hub/index.mjs),
 // so keep it plain data that Node can import: no icons, no Vite-only imports.
 //
-// type: 'live'        -> deployed demo at `url` (a *.aftrsolutions.com subdomain behind Caddy forward_auth)
+// type: 'live'        -> deployed demo. Its URL is NOT kept here (this file ships in the public JS bundle):
+//                        it lives in hub/demo-urls.mjs and is only returned by the signed-in Hub API.
 //       'video'       -> recorded walkthrough at `videoUrl`
 //       'coming-soon' -> no demo deployed yet
 // Only switch an entry to 'live' once its container is running on the server (see DEPLOY.md).
 export const demos = [
+  {
+    slug: 'scrap-management',
+    product: 'Scrap Management System',
+    summary: 'Explore a working scrap management system with sample data: stock, transactions and reports.',
+    type: 'live', // URL lives server-side only, in hub/demo-urls.mjs
+    tryThis: [
+      'Browse the scrap inventory and filter by category',
+      'Record a sample purchase or sale',
+      'Open the reports dashboard',
+    ],
+  },
   {
     slug: 'whatsapp-chatbot',
     product: 'WhatsApp AI Chatbot',
@@ -34,13 +46,6 @@ export const demos = [
     summary: 'Walk through a sample company in Phelix ERP: create an invoice, receive stock and see the reports update.',
     type: 'coming-soon',
     tryThis: ['Create a sales invoice', 'Receive a purchase into stock', 'Open the profit and loss report'],
-  },
-  {
-    slug: 'scrap-management',
-    product: 'Scrap Management',
-    summary: 'Record a scrap purchase, weigh it in, sell it on and watch stock and profit update by material.',
-    type: 'coming-soon',
-    tryThis: ['Record a purchase with weights', 'Check stock by material and grade', 'Sell a load and view the profit'],
   },
 ]
 

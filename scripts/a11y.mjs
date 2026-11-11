@@ -22,6 +22,7 @@ const sampleUser = (id, status) => ({
 })
 const hubMocks = {
   '**/api/hub/me': { name: 'Test Admin', email: 'admin@example.com', role: 'admin' },
+  '**/api/hub/demos': { demos: demos.map((d) => ({ ...d, url: d.type === 'live' ? 'https://demo.example.com' : undefined })) },
   '**/api/hub/admin/users*': { users: [sampleUser(1, 'pending'), sampleUser(2, 'pending')] },
   '**/api/hub/admin/stats': {
     users: { pending: 2, approved: 1, rejected: 0, revoked: 0 }, demoOpens: { total: 3, last7Days: 1 },

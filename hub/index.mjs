@@ -12,6 +12,7 @@ import { hash, verify } from '@node-rs/argon2'
 import { openDb } from './db.mjs'
 import { checkNotify, notifyNewRequest } from './notify.mjs'
 import { demos } from '../src/data/hub.js'
+import { demoUrl } from './demo-urls.mjs'
 
 const PORT = Number(process.env.PORT || 8790)
 const PROD = process.env.NODE_ENV === 'production'
@@ -257,13 +258,17 @@ async function updateProfile(req, res, user) {
   send(res, 200, { user: publicUser({ ...user, name }) })
 }
 
-const publicDemo = ({ slug, product, summary, type, url, videoUrl, tryThis }) =>
-  ({ slug, product, summary, type, url: type === 'live' ? url : undefined, videoUrl: type === 'video' ? videoUrl : undefined, tryThis })
+// Live demo URLs come from hub/demo-urls.mjs (server-only), never from the public data file.
+const demoTarget = (d) => d.type === 'live' ? demoUrl(d.slug) : d.type === 'video' ? d.videoUrl || null : null
+const publicDemo = (d) => ({
+  slug: d.slug, product: d.product, summary: d.summary, type: d.type, tryThis: d.tryThis, demoLogin: d.demoLogin,
+  url: d.type === 'live' ? demoTarget(d) || undefined : undefined, videoUrl: d.type === 'video' ? d.videoUrl : undefined,
+})
 
 function openDemo(req, res, user, slug) {
   const demo = demos.find((d) => d.slug === slug)
   if (!demo) throw new HttpError(404, 'Demo not found.')
-  const target = demo.type === 'live' ? demo.url : demo.type === 'video' ? demo.videoUrl : null
+  const target = demoTarget(demo)
   if (!target) throw new HttpError(409, 'This demo is coming soon.')
   q.logAccess.run(user.id, demo.slug, now())
   send(res, 200, { url: target })

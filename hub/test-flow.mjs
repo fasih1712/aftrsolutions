@@ -144,6 +144,14 @@ await step('demos list; coming-soon demo cannot be opened', async () => {
   const soon = d.data.demos.find((x) => x.type === 'coming-soon')
   if (soon) assert.equal((await call(`/demos/${soon.slug}/open`, { method: 'POST', body: {}, cookie: user })).status, 409)
   assert.equal((await call('/demos/nope/open', { method: 'POST', body: {}, cookie: user })).status, 404)
+  const live = d.data.demos.find((x) => x.type === 'live')
+  if (live) {
+    assert.ok(live.url, 'live demo has a url for signed-in users')
+    const o = await call(`/demos/${live.slug}/open`, { method: 'POST', body: {}, cookie: user })
+    assert.equal(o.status, 200)
+    assert.equal(o.data.url, live.url)
+  }
+  assert.equal((await call('/demos')).status, 401) // signed out: no demo list, no URLs
 })
 
 await step('logout -> verify 401', async () => {

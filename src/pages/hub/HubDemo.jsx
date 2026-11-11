@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowUpRight, Check, PlayCircle } from 'lucide-react'
 import { PageHeader } from '../../components/Common'
@@ -16,7 +16,24 @@ function Demo({ demo }) {
   const [note, setNote] = useState('')
   useReveal(useLocation().pathname)
   const product = productFor(demo)
-  const target = demo.type === 'live' ? demo.url : demo.type === 'video' ? demo.videoUrl : null
+  // Demo URLs are never in the public bundle: the signed-in API hands them out.
+  const [target, setTarget] = useState(null)
+  const [demoLogin, setDemoLogin] = useState(demo.demoLogin || '')
+  const [loading, setLoading] = useState(demo.type !== 'coming-soon')
+
+  useEffect(() => {
+    if (demo.type === 'coming-soon') return undefined
+    let alive = true
+    hubFetch('/demos').then((r) => {
+      if (!alive) return
+      if (r.status === 401) { expire(); return }
+      const d = r.data.demos?.find((x) => x.slug === demo.slug)
+      setTarget(d?.url || d?.videoUrl || null)
+      if (d?.demoLogin) setDemoLogin(d.demoLogin)
+      setLoading(false)
+    })
+    return () => { alive = false }
+  }, [demo.slug, demo.type, expire])
 
   // The link itself opens the demo (so popup blockers never interfere); this records the visit.
   const logOpen = async () => {
@@ -31,8 +48,10 @@ function Demo({ demo }) {
     <>
       <PageHeader eyebrow={product?.tag || 'Innovation Hub'} title={demo.product} lead={demo.summary}>
         <div className="hero__cta reveal">
-          {target ? (
-            <a href={target} target="_blank" rel="noopener" className="btn btn--primary" onClick={logOpen}>
+          {loading ? (
+            <span className="btn btn--primary" aria-disabled="true">Loading demo…</span>
+          ) : target ? (
+            <a href={target} target="_blank" rel="noopener noreferrer" className="btn btn--primary" onClick={logOpen}>
               {demo.type === 'video' ? <>Watch the demo <PlayCircle size={18} /></> : <>Launch demo <ArrowUpRight size={18} /></>}
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
@@ -44,6 +63,7 @@ function Demo({ demo }) {
         <p className="hub-demo__status reveal">
           <span className={`hub-badge hub-badge--${demo.type}`}>{demo.type === 'coming-soon' ? 'Demo coming soon' : DEMO_LABELS[demo.type]}</span>
         </p>
+        {demoLogin && <p className="form-note reveal">{demoLogin}</p>}
         <div aria-live="polite" className="form-note">{note}</div>
       </PageHeader>
 

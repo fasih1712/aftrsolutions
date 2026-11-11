@@ -137,7 +137,32 @@ on its own subdomain such as `demo-chatbot.aftrsolutions.com`. The Hub session c
    answers with a redirect to `https://aftrsolutions.com/hub/login?next=<the demo URL>`, which Caddy passes
    to the browser. (Caddy hands the auth response straight back to the visitor, so a `handle_errors`
    redirect would never run.) `next` is only honoured for `aftrsolutions.com` and its subdomains.
-4. **Website:** in `src/data/hub.js` set that demo's `type: 'live'` and `url: 'https://demo-chatbot.aftrsolutions.com'`,
-   then push. The Hub, the demo page and the chat assistant's knowledge all update from that file.
+4. **Website:** in `src/data/hub.js` set that demo's `type: 'live'`, and put its URL in `hub/demo-urls.mjs`
+   (`'demo-chatbot': 'https://demo-chatbot.aftrsolutions.com'`), then push. The URL is kept out of `src/data/hub.js`
+   because that file ships in the public JS bundle; only the signed-in Hub API returns it. The Hub, the demo page
+   and the chat assistant's knowledge all update from these files.
 
 Revoking a user deletes their sessions, so they lose access to every demo at once.
+
+#### Scrap Management demo (to do: put it behind the Hub login)
+
+The Scrap Management demo is live at `http://13.233.73.99:8090`, an explicit exception in `hub/demo-urls.mjs`.
+That raw IP:port link is **not protected by the Hub login** (anyone who has the link can open it) and it is
+plain HTTP. To protect it like the other demos:
+
+1. **Container:** bind the scrap container to the docker bridge only: `ports: ["172.17.0.1:9102:<app port>"]`
+   instead of `0.0.0.0:8090`.
+2. **DNS (Spaceship):** `A` record `demo-scrap` -> `13.233.73.99`.
+3. **Caddy:** add to the ThesisCraftMentor repo's `Caddyfile` and push:
+   ```
+   demo-scrap.aftrsolutions.com {
+       forward_auth 172.17.0.1:8081 {
+           uri /api/hub/auth/verify?redirect=1
+           copy_headers X-Hub-User
+       }
+       reverse_proxy 172.17.0.1:9102
+   }
+   ```
+   (`?redirect=1` sends signed-out visitors to the Hub login; a `handle_errors` redirect would never run, see above.)
+4. **Website:** in `hub/demo-urls.mjs` change `'scrap-management'` to `'https://demo-scrap.aftrsolutions.com'`,
+   remove it from `RAW_URL_EXCEPTIONS`, push, then close port 8090 in the AWS security group.

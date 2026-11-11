@@ -4,6 +4,15 @@ import { Boxes, Recycle, MessageCircle, BotMessageSquare, LineChart } from 'luci
 // `anim` picks the icon animation on the Products page: stack | spin | chat | bot | chart.
 export const products = [
   {
+    icon: Recycle,
+    tag: 'Operations',
+    title: 'Scrap Management System',
+    anim: 'spin',
+    own: true,
+    text: 'Track scrap from collection to sale: inventory, weighing, pricing, buyers and reports in one place, so nothing goes missing and every kilo is accounted for.',
+    features: ['Scrap inventory by type and grade', 'Purchase and sales records', 'Buyer and vendor management', 'Reports and dashboards'],
+  },
+  {
     icon: MessageCircle,
     tag: 'AI · WhatsApp',
     title: 'WhatsApp AI Chatbot',
@@ -37,14 +46,5 @@ export const products = [
     own: true,
     text: 'Our own ERP, designed and built in-house. Finance, inventory, sales and operations run from one system that we configure around the way your business works.',
     features: ['Finance & accounting', 'Inventory & purchasing', 'Sales, invoicing & customers', 'Role-based access & reports'],
-  },
-  {
-    icon: Recycle,
-    tag: 'Operations',
-    title: 'Scrap Management',
-    anim: 'spin',
-    own: true,
-    text: 'A complete system for scrap and recycling businesses. Track every load from purchase to sale, with stock, pricing and accounts always up to date.',
-    features: ['Purchase & weighing records', 'Stock by material & grade', 'Buyer & supplier accounts', 'Profit and stock reports'],
   },
 ]
