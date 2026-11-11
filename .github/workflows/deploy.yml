@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04   # pinned: Playwright --with-deps fails on the Ubuntu 26 image
+    runs-on: ubuntu-24.04   # pinned: image with Google Chrome preinstalled (used by npm run a11y)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,12 +21,14 @@ jobs:
       - run: npm ci
       - run: npm run build   # fail fast before touching the server
       - run: npm run knowledge   # chat assistant knowledge must build too
-      - run: npx playwright install --with-deps chromium
+      # The runner image ships Google Chrome, so no Playwright browser download / apt deps needed.
       - run: npm run a11y   # blocks the deploy on any critical/serious axe violation
+        env:
+          CHANNEL: chrome
 
   deploy:
     needs: build
-    runs-on: ubuntu-24.04   # pinned: Playwright --with-deps fails on the Ubuntu 26 image
+    runs-on: ubuntu-24.04   # pinned: image with Google Chrome preinstalled (used by npm run a11y)
     steps:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
