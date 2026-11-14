@@ -5,7 +5,7 @@ Point `aftrsolutions.com` and `www.aftrsolutions.com` (A records) to the EC2 pub
 
 ## 2. Run the container on the server
 ```bash
-git clone https://github.com/fasih1712/aftrsolutions.git ~/aftrsolutions
+git clone https://github.com/Aftr-Solutions/aftrsolutions.git ~/aftrsolutions
 cd ~/aftrsolutions
 docker compose up -d --build
 curl -I http://127.0.0.1:8081      # should return 200
@@ -32,18 +32,28 @@ Let's Encrypt certificates automatically (stored in the `caddy_data` volume).
 ```bash
 cd ~/aftrsolutions && git pull && docker compose up -d --build
 ```
-## 5. CI/CD (automatic)
-`.github/workflows/deploy.yml` builds the site and, on every push to `main`, SSHes into
-the server and runs `git reset --hard origin/main && docker compose up -d --build`.
+## 5. CI/CD (automatic, keyless via OIDC + SSM)
+`.github/workflows/deploy.yml` builds the site, then on every push to `main`:
 
-Repo → Settings → Secrets and variables → Actions → add:
+1. Gets short-lived AWS credentials through **GitHub OIDC** (no stored AWS keys, no SSH key)
+   by assuming `arn:aws:iam::545908811041:role/github-actions-aftr-deploy`. The role only
+   trusts `Aftr-Solutions/aftrsolutions` on `refs/heads/main`.
+2. Copies each non-empty app secret (GitHub secrets below) into **SSM Parameter Store** as a
+   SecureString under `/aftrsolutions/<NAME>`.
+3. Runs `deploy/server-deploy.sh` on the server (instance `i-0fe1dd19adfb072d6`) through
+   **SSM Run Command**, as user `ubuntu`: points `origin` at the org repo, resets to the pushed
+   commit, writes `.env` from Parameter Store (instance role `soorty-ec2-ssm`, inline policy
+   `read-aftrsolutions-params`), then `docker compose build && up -d` and health checks.
 
-| Secret | Value |
-|---|---|
-| `EC2_HOST` | EC2 public IP |
-| `EC2_USER` | `ubuntu` |
-| `EC2_SSH_KEY` | full contents of the `.pem` private key |
+AWS side (already set up, account 545908811041, ap-south-1):
 
+| Piece | Name | Permissions |
+|---|---|---|
+| OIDC provider | `token.actions.githubusercontent.com` | audience `sts.amazonaws.com` |
+| Deploy role | `github-actions-aftr-deploy` | `ssm:PutParameter` on `/aftrsolutions/*`, `ssm:SendCommand` on the instance + `AWS-RunShellScript`, read command results |
+| Instance role | `soorty-ec2-ssm` | `AmazonSSMManagedInstanceCore` + read `/aftrsolutions/*` |
+
+The old `EC2_HOST`, `EC2_USER` and `EC2_SSH_KEY` secrets are no longer used by this repo.
 Caddy config (step 3) is a one-time manual step; the workflow does not touch it.
 
 ## AI chat assistant

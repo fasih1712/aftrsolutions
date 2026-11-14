@@ -28,10 +28,32 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-24.04   # pinned: image with Google Chrome preinstalled (used by npm run a11y)
+    runs-on: ubuntu-24.04
+    # Keyless deploy: GitHub OIDC -> IAM role -> AWS SSM Run Command on the EC2 server.
+    # No SSH key, no open port 22 needed for this repo. Role trust is limited to
+    # Aftr-Solutions/aftrsolutions on refs/heads/main.
+    permissions:
+      id-token: write   # needed to request the OIDC token
+      contents: read
+    env:
+      AWS_REGION: ap-south-1
+      INSTANCE_ID: i-0fe1dd19adfb072d6
+      PARAM_PATH: /aftrsolutions
     steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::545908811041:role/github-actions-aftr-deploy
+          role-session-name: aftrsolutions-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # GitHub secrets stay the source of truth. Each non-empty one is copied into SSM
+      # Parameter Store (SecureString); the server reads them with its instance role, so
+      # secret values never appear in the SSM command or its history. An empty/missing
+      # secret leaves the stored value untouched.
+      - name: Sync app secrets to Parameter Store
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -43,52 +65,49 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           HUB_NOTIFY_EMAIL: ${{ secrets.HUB_NOTIFY_EMAIL }}
-        with:
-          envs: GEMINI_API_KEY,ANTHROPIC_API_KEY,HUB_ADMIN_EMAILS,HUB_ADMIN_PASSWORD,HUB_ADMIN_NAMES,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,HUB_NOTIFY_EMAIL
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: true
-          script: |
-            set -e
-            APP_DIR="$HOME/aftrsolutions"
-            if [ ! -d "$APP_DIR/.git" ]; then
-              git clone https://github.com/${{ github.repository }}.git "$APP_DIR"
-            fi
-            cd "$APP_DIR"
-            git fetch --all
-            git reset --hard origin/main
-            # Secrets -> .env (mode 600, kept out of git). Each non-empty secret replaces its own
-            # line; a secret that is empty or missing in GitHub leaves the existing line alone,
-            # so a deploy can never wipe a key. Values are single-quoted so docker compose reads
-            # them literally (a value must not contain a single quote).
-            #   GEMINI_API_KEY = chat, free tier (used first); ANTHROPIC_API_KEY = chat, paid alternative
-            #   HUB_ADMIN_EMAILS / HUB_ADMIN_PASSWORD = Innovation Hub admins, created on first start
-            #   HUB_ADMIN_NAMES = their names, same order as the emails (e.g. Muhammad Fasihullah,Abdul Rafay)
-            #   SMTP_* / HUB_NOTIFY_EMAIL = email to the team on every new Hub access request
-            umask 077
-            touch .env
-            chmod 600 .env
-            set_env() {
-              [ -n "$2" ] || return 0
-              case "$2" in *"'"*) echo "Skipping $1: value contains a single quote"; return 0 ;; esac
-              grep -v "^$1=" .env > .env.tmp || true
-              printf "%s='%s'\n" "$1" "$2" >> .env.tmp
-              mv .env.tmp .env
-            }
-            set_env GEMINI_API_KEY "$GEMINI_API_KEY"
-            set_env ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
-            set_env HUB_ADMIN_EMAILS "$HUB_ADMIN_EMAILS"
-            set_env HUB_ADMIN_PASSWORD "$HUB_ADMIN_PASSWORD"
-            set_env HUB_ADMIN_NAMES "$HUB_ADMIN_NAMES"
-            set_env SMTP_HOST "$SMTP_HOST"
-            set_env SMTP_PORT "$SMTP_PORT"
-            set_env SMTP_USER "$SMTP_USER"
-            set_env SMTP_PASS "$SMTP_PASS"
-            set_env HUB_NOTIFY_EMAIL "$HUB_NOTIFY_EMAIL"
-            docker compose up -d --build
-            docker image prune -f
-            sleep 3
-            curl -fsS -o /dev/null http://127.0.0.1:8081 && echo "AFTR site is up on 127.0.0.1:8081"
-            echo "Chat assistant: $(curl -fsS http://127.0.0.1:8081/api/health || echo 'not reachable')"
-            echo "Innovation Hub API: $(curl -fsS http://127.0.0.1:8081/api/hub/health || echo 'not reachable')"
+        run: |
+          for name in GEMINI_API_KEY ANTHROPIC_API_KEY HUB_ADMIN_EMAILS HUB_ADMIN_PASSWORD HUB_ADMIN_NAMES \
+                      SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS HUB_NOTIFY_EMAIL; do
+            value="${!name}"
+            [ -n "$value" ] || { echo "skip $name (not set in GitHub)"; continue; }
+            aws ssm put-parameter --name "$PARAM_PATH/$name" --type SecureString \
+              --value "$value" --overwrite >/dev/null
+            echo "synced $name"
+          done
+
+      - name: Deploy via SSM Run Command
+        run: |
+          set -euo pipefail
+          B64=$(base64 -w0 deploy/server-deploy.sh)
+          jq -n --arg b64 "$B64" --arg sha "$GITHUB_SHA" '{
+            commands: [
+              "echo \($b64) | base64 -d > /tmp/aftr-deploy.sh",
+              "chmod 755 /tmp/aftr-deploy.sh",
+              "sudo -H -u ubuntu bash /tmp/aftr-deploy.sh \($sha) 2>&1"
+            ],
+            executionTimeout: ["1200"]
+          }' > params.json
+          CID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "aftrsolutions ${GITHUB_SHA::7}" \
+            --timeout-seconds 600 \
+            --parameters file://params.json \
+            --query Command.CommandId --output text)
+          echo "SSM command: $CID"
+          STATUS=Pending
+          for i in $(seq 1 120); do
+            sleep 10
+            STATUS=$(aws ssm get-command-invocation --command-id "$CID" --instance-id "$INSTANCE_ID" \
+                       --query Status --output text 2>/dev/null || echo Pending)
+            case "$STATUS" in Pending|InProgress|Delayed) continue ;; *) break ;; esac
+          done
+          echo "::group::Server output"
+          aws ssm get-command-invocation --command-id "$CID" --instance-id "$INSTANCE_ID" \
+            --query StandardOutputContent --output text
+          echo "::endgroup::"
+          ERR=$(aws ssm get-command-invocation --command-id "$CID" --instance-id "$INSTANCE_ID" \
+                  --query StandardErrorContent --output text)
+          [ -z "$ERR" ] || { echo "::group::Server errors"; echo "$ERR"; echo "::endgroup::"; }
+          echo "Status: $STATUS"
+          [ "$STATUS" = "Success" ]

@@ -73,6 +73,7 @@ Company website for AFTR Solutions (Cloud, DevOps, AI, software services). Owner
 - `docker compose up -d --build` — serves on 127.0.0.1:8081 (aftr-web + aftr-chat + hub-api)
 
 ## Deployment
+- GitHub repo: `Aftr-Solutions/aftrsolutions` (org). Deploy = GitHub OIDC -> IAM role `github-actions-aftr-deploy` -> SSM Run Command runs `deploy/server-deploy.sh` on the EC2 (no SSH). App secrets: GitHub secrets -> SSM Parameter Store `/aftrsolutions/*` -> `.env`. See DEPLOY.md section 5.
 - AWS EC2 (Ubuntu 24.04) — the same server that hosts Thesis Craft Mentors.
 - Container: multi-stage Dockerfile (node build -> nginx-unprivileged, listens on 8080). Bound to 127.0.0.1:8081 and 172.17.0.1:8081 (docker0).
 - Caddy runs inside the `thesiscraftmentors` container (Caddyfile baked in the ThesisCraftMentor repo) and reverse-proxies `aftrsolutions.com` + `www` to 172.17.0.1:8081. See DEPLOY.md.
