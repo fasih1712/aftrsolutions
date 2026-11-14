@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04   # pinned: image with Google Chrome preinstalled (used by npm run a11y)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -40,7 +40,7 @@ jobs:
       INSTANCE_ID: i-0fe1dd19adfb072d6
       PARAM_PATH: /aftrsolutions
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
